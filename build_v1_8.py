@@ -58,8 +58,8 @@ COMPILE_PASSES = 2
 # 이 파일들이 FONT_DIR에 존재하지 않으면 컴파일을 시작하지 않는다
 FONT_DIR = Path("/usr/local/share/fonts")
 REQUIRED_FONTS = [
-    ("KoPubWorld_Batang_Medium.ttf", "KoPub 바탕체 (한국어 전용)"),
-    ("KoPubWorld_Batang_Bold.ttf",   "KoPub 바탕체 Bold"),
+    ("KoPubBatangMedium.ttf", "KoPub 바탕체 (한국어 전용)"),
+    ("KoPubBatangBold.ttf",   "KoPub 바탕체 Bold"),
     ("Brill-Roman.ttf",       "Brill (영어·라틴어·그리스어 전용)"),
     ("Brill-Bold.ttf",        "Brill Bold"),
     ("Brill-Italic.ttf",      "Brill Italic"),
