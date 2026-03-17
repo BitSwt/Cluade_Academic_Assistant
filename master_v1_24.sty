@@ -1,24 +1,13 @@
 % ============================================================
 % master.sty — 문서 작성 마스터 스타일 파일
-% 버전: v1_24
+% 버전: v1_22
 %
 % 사용법: \usepackage{master} (문서 프리앰블에 한 줄)
 % 저술 정의: 각 문서 프리앰블에 \DeclareWorkGR 등으로 직접 추가
-%
-% v1_23 변경 사항:
-%   - xkanjiskip 전역 설정 추가
-%     KoPub(한국어)·Brill(라틴/그리스) 혼용 환경에서 폰트 경계의
-%     간격 소실 문제를 전역에서 해결한다.
-%
-% v1_24 변경 사항:
-%   - titlesec nobottomtitles* 옵션 추가
-%     헤딩 뒤에 최소 한 줄의 본문이 이어질 공간이 없을 경우,
-%     헤딩 전체를 자동으로 다음 페이지로 이동시킨다.
-%     section·subsection·subsubsection 모두에 적용된다.
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{master}[2025/03/17 v1.24 Master Style]
+\ProvidesPackage{master}[2025/03/16 v1.22 Master Style]
 
 % ── 패키지 ────────────────────────────────────────────────────────────────────
 \RequirePackage{luatexja-fontspec}  % 한국어/서양 폰트 독립 관리
@@ -32,7 +21,7 @@
 \RequirePackage{xcolor}
 \RequirePackage{fancyhdr}
 \RequirePackage{microtype}
-\RequirePackage[nobottomtitles*]{titlesec}
+\RequirePackage{titlesec}
 \RequirePackage[hidelinks]{hyperref}
 \RequirePackage{graphicx}
 \RequirePackage{wrapfig}
@@ -76,10 +65,10 @@
 % 한국어 전용: KoPub 바탕체
 \setmainjfont{KoPubWorldBatang}[
   Path           = /usr/local/share/fonts/,
-  UprightFont    = KoPubBatangMedium.ttf,
-  BoldFont       = KoPubBatangBold.ttf,
-  ItalicFont     = KoPubBatangMedium.ttf,
-  BoldItalicFont = KoPubBatangBold.ttf
+  UprightFont    = KoPubWorld_Batang_Medium.ttf,
+  BoldFont       = KoPubWorld_Batang_Bold.ttf,
+  ItalicFont     = KoPubWorld_Batang_Medium.ttf,
+  BoldItalicFont = KoPubWorld_Batang_Bold.ttf
 ]
 
 % ── 편의 명령어 ───────────────────────────────────────────────────────────────
@@ -197,23 +186,10 @@
 % ── 한국어 단어 간격 설정 ─────────────────────────────────────────────────────
 % KoPub 바탕체의 기본 단어 간격이 좁으므로 \spaceskip으로 보정
 % \spaceskip: 단어 사이 공백 크기를 명시적으로 지정
-%   0.42em        = 기본 간격
+%   0.35em        = 기본 간격
 %   plus 0.15em   = 늘어날 수 있는 최대치 (줄 맞춤 시 활용)
 %   minus 0.1em   = 줄어들 수 있는 최소치
 \spaceskip=0.42em plus 0.15em minus 0.1em
-
-% ── 한국어·라틴/그리스 경계 간격 설정 ───────────────────────────────────────
-% xkanjiskip: CJK 문자(KoPub)와 비CJK 문자(Brill) 사이의 자동 간격
-%
-% 이 값이 설정되지 않으면 LuaTeX-ja가 KoPub↔Brill 폰트 전환 경계에서
-% 간격을 삽입하지 않아, 아래와 같은 현상이 발생한다.
-%   - 한국어 조사가 \citework 출력 뒤에 붙는 경우: "범주론 은" → "범주론은"
-%   - 줄바꿈 위치에서 한국어 끝과 라틴어 시작이 붙는 경우: "으로이어진다"
-%   - \textbf·\gr 명령어 경계에서 공백이 사라지는 경우
-%
-% 전역 설정으로 모든 문서에 자동 적용되므로,
-% 각 문서 프리앰블에서 별도 선언이 불필요하다.
-\ltjsetparameter{xkanjiskip=0.25em plus 0.06em minus 0.04em}
 
 % wrapfigure/wraptable 여백
 \setlength{\intextsep}{12pt}   % 상하 여백
