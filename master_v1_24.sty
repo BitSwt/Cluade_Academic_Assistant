@@ -1,0 +1,436 @@
+% ============================================================
+% master.sty — 문서 작성 마스터 스타일 파일
+% 버전: v1_24
+%
+% 사용법: \usepackage{master} (문서 프리앰블에 한 줄)
+% 저술 정의: 각 문서 프리앰블에 \DeclareWorkGR 등으로 직접 추가
+%
+% v1_23 변경 사항:
+%   - xkanjiskip 전역 설정 추가
+%     KoPub(한국어)·Brill(라틴/그리스) 혼용 환경에서 폰트 경계의
+%     간격 소실 문제를 전역에서 해결한다.
+%
+% v1_24 변경 사항:
+%   - titlesec nobottomtitles* 옵션 추가
+%     헤딩 뒤에 최소 한 줄의 본문이 이어질 공간이 없을 경우,
+%     헤딩 전체를 자동으로 다음 페이지로 이동시킨다.
+%     section·subsection·subsubsection 모두에 적용된다.
+% ============================================================
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{master}[2025/03/17 v1.24 Master Style]
+
+% ── 패키지 ────────────────────────────────────────────────────────────────────
+\RequirePackage{luatexja-fontspec}  % 한국어/서양 폰트 독립 관리
+\RequirePackage{etoolbox}           % \csdef, \ifcsdef (저술 인용 시스템)
+\RequirePackage{geometry}
+\RequirePackage{setspace}
+\RequirePackage{booktabs}
+\RequirePackage{array}
+\RequirePackage{multirow}
+\RequirePackage{colortbl}
+\RequirePackage{xcolor}
+\RequirePackage{fancyhdr}
+\RequirePackage{microtype}
+\RequirePackage[nobottomtitles*]{titlesec}
+\RequirePackage[hidelinks]{hyperref}
+\RequirePackage{graphicx}
+\RequirePackage{wrapfig}
+\RequirePackage{needspace}
+\RequirePackage{caption}
+\RequirePackage{footmisc}
+\RequirePackage{longtable}          % 페이지 전체 표 (열 너비 자동 계산 시스템과 함께 사용)
+
+% ── 문자 범위 설정 ────────────────────────────────────────────────────────────
+% range 6: 그리스어 전체 → Brill
+%   기본 설정에서 GreekExtended(U+1F00–U+1FFF)가 CJK로 잘못 분류되므로 명시
+\ltjdefcharrange{6}{%
+  "0300-"036F,  % Combining Diacritical Marks
+  "0370-"03FF,  % Greek and Coptic
+  "1F00-"1FFF   % Greek Extended (폴리토닉 악센트 포함)
+}
+\ltjsetparameter{jacharrange={-6}}  % range 6 → Brill
+
+% range 7: 한국어·한자(漢字)·CJK 특수 괄호 → KoPub
+%   한자: CJK Unified Ideographs (U+4E00–U+9FFF)
+%         CJK Compatibility Ideographs (U+F900–U+FAFF)
+%   특수 괄호: CJK Symbols and Punctuation (U+3000–U+303F, 예: 『』「」)
+\ltjdefcharrange{7}{%
+  "3000-"303F,  % CJK Symbols and Punctuation (『』「」등)
+  "4E00-"9FFF,  % CJK Unified Ideographs (한자)
+  "F900-"FAFF,  % CJK Compatibility Ideographs
+  "AC00-"D7AF   % Hangul Syllables
+}
+\ltjsetparameter{jacharrange={+7}}  % range 7 → KoPub
+
+% ── 폰트 설정 ─────────────────────────────────────────────────────────────────
+% 서양 폰트 (영어·라틴어·그리스어·숫자): Brill
+\setmainfont{Brill}[
+  Path           = /usr/local/share/fonts/,
+  UprightFont    = Brill-Roman.ttf,
+  BoldFont       = Brill-Bold.ttf,
+  ItalicFont     = Brill-Italic.ttf,
+  BoldItalicFont = Brill-BoldItalic.ttf
+]
+
+% 한국어 전용: KoPub 바탕체
+\setmainjfont{KoPubWorldBatang}[
+  Path           = /usr/local/share/fonts/,
+  UprightFont    = KoPubBatangMedium.ttf,
+  BoldFont       = KoPubBatangBold.ttf,
+  ItalicFont     = KoPubBatangMedium.ttf,
+  BoldItalicFont = KoPubBatangBold.ttf
+]
+
+% ── 편의 명령어 ───────────────────────────────────────────────────────────────
+% \gr{}  : 그리스어 — Brill Roman, 비이탤릭 원칙
+% \gri{} : 그리스어·한국어를 제외한 모든 언어의 문헌 제목에 적용
+%          (라틴어·영어·프랑스어·독일어·아랍어 음차 등 언어 무관)
+% \grb{} : 볼드 (표 헤딩 내 원어 병기 등)
+\newcommand{\gr}[1]{{\upshape #1}}
+\newcommand{\gri}[1]{{\itshape #1}}
+\newcommand{\grb}[1]{{\bfseries\upshape #1}}
+
+% ── 저술 인용 시스템 ──────────────────────────────────────────────────────────
+%
+% 언어별 표기 원칙:
+%   그리스어 저술: 한국어 + 그리스어 원제 + 라틴어 학술 표준 제목
+%   아랍어 저술:  한국어 + 영어 음차 + 라틴어 번역 제목 (없으면 음차만)
+%   라틴어 저술:  한국어 + 라틴어 제목
+%
+% 첫 등장: 『한국어』(원제 병기) 라인번호
+% 이후:   한국어 라인번호
+%
+% 사용법:
+%   \DeclareWorkGR{id}{한국어}{그리스어}{라틴어}
+%   \DeclareWorkAR{id}{한국어}{영어 음차}{라틴어 번역} % 라틴어 없으면 {}
+%   \DeclareWorkLA{id}{한국어}{라틴어}
+%   \citework{id}{라인번호}
+%   \usework{id}  ← 본문 수동 소개 후 플래그만 설정
+
+\makeatletter
+
+\newcommand{\DeclareWorkGR}[4]{%
+  \csdef{work@ko@#1}{#2}%
+  \csdef{work@gr@#1}{#3}%
+  \csdef{work@lat@#1}{#4}%
+  \csdef{work@type@#1}{gr}%
+}
+
+\newcommand{\DeclareWorkAR}[4]{%
+  \csdef{work@ko@#1}{#2}%
+  \csdef{work@tr@#1}{#3}%   % 영어 음차
+  \csdef{work@lat@#1}{#4}%  % 라틴어 번역 제목 (없으면 빈 값)
+  \csdef{work@type@#1}{ar}%
+}
+
+\newcommand{\DeclareWorkLA}[3]{%
+  \csdef{work@ko@#1}{#2}%
+  \csdef{work@lat@#1}{#3}%
+  \csdef{work@type@#1}{la}%
+}
+
+\newcommand{\citework}[2]{%
+  \ifcsdef{work@ko@#1}{%
+    \ifcsdef{workused@#1}{%
+      % 이후 등장: 한국어 라인번호
+      \csuse{work@ko@#1}~#2%
+    }{%
+      % 첫 등장: 언어 유형에 따라 원제 병기
+      \edef\tmptype{\csuse{work@type@#1}}%
+      \ifdefstring{\tmptype}{gr}{%
+        % 그리스어: 『한국어』(그리스어, 라틴어)
+        『\csuse{work@ko@#1}』%
+        \ (\csuse{work@gr@#1},\ \textit{\csuse{work@lat@#1}})~#2%
+      }{%
+        \ifdefstring{\tmptype}{ar}{%
+          % 아랍어: 『한국어』(영어 음차, 라틴어) 또는 『한국어』(영어 음차)
+          『\csuse{work@ko@#1}』%
+          \ (\textit{\csuse{work@tr@#1}}%
+          \ifcsempty{work@lat@#1}{}{,\ \textit{\csuse{work@lat@#1}}}%
+          )~#2%
+        }{%
+          % 라틴어: 『한국어』(라틴어)
+          『\csuse{work@ko@#1}』%
+          \ (\textit{\csuse{work@lat@#1}})~#2%
+        }%
+      }%
+      \global\csdef{workused@#1}{1}%
+    }%
+  }{%
+    \textbf{[??~#1]}%  % 미정의 저술 오류 표시
+  }%
+}
+
+\newcommand{\usework}[1]{%
+  \global\csdef{workused@#1}{1}%
+}
+
+\makeatother
+
+% ── 페이지 설정 ───────────────────────────────────────────────────────────────
+\geometry{
+  a4paper,
+  top      = 28mm,
+  bottom   = 28mm,
+  left     = 35mm,
+  right    = 35mm,
+  headsep  = 8mm,
+  footskip = 14mm
+}
+
+% ── 줄 간격 및 단락 설정 ─────────────────────────────────────────────────────
+% 본문 줄 간격 1.5 + 단락 간 10pt 추가 여백
+\setstretch{1.5}
+\setlength{\parskip}{10pt plus 2pt minus 1pt}
+\setlength{\parindent}{0pt}
+
+% ── Widow / Orphan 방지 ───────────────────────────────────────────────────────
+% Orphan  = 단락의 첫 줄이 페이지 하단에 홀로 남는 것 (clubpenalty)
+% Widow   = 단락의 마지막 줄이 다음 페이지 상단에 홀로 오는 것 (widowpenalty)
+% 값이 클수록 강하게 회피. 10000은 완전 금지이나 다른 레이아웃 문제를 유발할 수 있으므로
+% 3000 수준에서 강하게 억제하되, 불가피한 경우 LaTeX가 대안을 찾도록 허용함.
+\clubpenalty  = 3000   % orphan 방지
+\widowpenalty = 3000   % widow 방지
+\displaywidowpenalty = 3000  % 수식 환경 직전 widow 방지
+
+% ── 한국어 단어 간격 설정 ─────────────────────────────────────────────────────
+% KoPub 바탕체의 기본 단어 간격이 좁으므로 \spaceskip으로 보정
+% \spaceskip: 단어 사이 공백 크기를 명시적으로 지정
+%   0.42em        = 기본 간격
+%   plus 0.15em   = 늘어날 수 있는 최대치 (줄 맞춤 시 활용)
+%   minus 0.1em   = 줄어들 수 있는 최소치
+\spaceskip=0.42em plus 0.15em minus 0.1em
+
+% ── 한국어·라틴/그리스 경계 간격 설정 ───────────────────────────────────────
+% xkanjiskip: CJK 문자(KoPub)와 비CJK 문자(Brill) 사이의 자동 간격
+%
+% 이 값이 설정되지 않으면 LuaTeX-ja가 KoPub↔Brill 폰트 전환 경계에서
+% 간격을 삽입하지 않아, 아래와 같은 현상이 발생한다.
+%   - 한국어 조사가 \citework 출력 뒤에 붙는 경우: "범주론 은" → "범주론은"
+%   - 줄바꿈 위치에서 한국어 끝과 라틴어 시작이 붙는 경우: "으로이어진다"
+%   - \textbf·\gr 명령어 경계에서 공백이 사라지는 경우
+%
+% 전역 설정으로 모든 문서에 자동 적용되므로,
+% 각 문서 프리앰블에서 별도 선언이 불필요하다.
+\ltjsetparameter{xkanjiskip=0.25em plus 0.06em minus 0.04em}
+
+% wrapfigure/wraptable 여백
+\setlength{\intextsep}{12pt}   % 상하 여백
+\setlength{\columnsep}{16pt}   % 텍스트와의 좌우 간격
+
+% ── 색상 정의 ─────────────────────────────────────────────────────────────────
+\definecolor{rulecolor}  {gray}{0.65}
+\definecolor{midgray}    {gray}{0.45}
+\definecolor{tableheadbg}{RGB}{245,245,240}
+\definecolor{citebg}     {RGB}{250,250,247}
+\definecolor{h1navy}     {RGB}{25,45,95}
+\definecolor{h2burgundy} {RGB}{125,28,48}
+\definecolor{h3green}    {RGB}{38,95,65}
+
+% altrowbg — zebra 격행 강조용 연회색
+%   rulecolor(gray 0.65) 12% tint ≈ RGB(234,234,234)
+\colorlet{altrowbg}{rulecolor!12!white}
+
+% reviewbg — 강조 행 전용 배경
+%   black 13% tint ≈ RGB(222,222,222)
+\colorlet{reviewbg}{black!13!white}
+
+% tableheadblue — 표 헤더 행 배경 (연한 하늘색)
+%   텍스트는 반드시 \color{h1navy}\bfseries 로 지정 (흰색 불가)
+\definecolor{tableheadblue}{RGB}{210,228,245}
+
+% ── 표 전역 기본값 ────────────────────────────────────────────────────────────
+%
+% 【표준 스타일: 셀 테두리 + zebra】
+%
+%  수직선: 열 정의에 | 사용
+%  수평선: \hline — 헤더 위아래 및 모든 행 끝
+%          \toprule / \midrule / \bottomrule (booktabs) 사용 금지
+%          (booktabs 수평선은 | 세로선과 교차점 처리 불일치가 발생함)
+%  헤더:   \rowcolor{tableheadblue} + {\color{h1navy}\bfseries 열 이름}
+%          tableheadblue(연한 하늘색)에 흰색 텍스트는 대비 부족 — h1navy 필수
+%  zebra:  \rowcolors{2}{altrowbg}{white} — longtable 선언 바로 앞에 배치
+%          강조 행 별도 지정 없음 — zebra 패턴을 끊지 않는다
+%          필요 시 \rowcolor{reviewbg} 수동 지정 가능 (\rowcolor > \rowcolors)
+%
+%  페이지 타이틀: 컬러블록(\colorbox 등) 사용하지 않는다
+%                 표 위에 일반 텍스트로 제목을 표기한다
+%
+%  셀 정렬 (longtable):
+%    세로 가운데: m{너비}  (p{} 사용 금지)
+%    가로 가운데: >{\centering\arraybackslash}m{너비}
+%
+%  열 너비: 하드코딩 금지 — 자동 계산 시스템 사용 (document_style_guide 참조)
+%  열 너비 계산 시 세로선 수 × \arrayrulewidth 를 반드시 포함한다.
+%
+%  문서 레벨 오버라이드 가능 설정:
+%    \setlength{\extrarowheight}{1.5pt}  % m{} 열 상하 패딩 보정
+%    \renewcommand{\arraystretch}{1.15}  % 표 행 간격 (본문 1.5와 별개)
+%    \setlength{\tabcolsep}{5pt}         % 셀 내부 좌우 여백
+%    \setlength{\LTpre}{0pt}             % longtable 앞 여백 (가로형 레이아웃)
+%    \setlength{\LTpost}{0pt}            % longtable 뒤 여백 (가로형 레이아웃)
+%
+\arrayrulecolor{rulecolor}             % 모든 테두리 색상: rulecolor (gray 0.65)
+\setlength{\arrayrulewidth}{0.4pt}     % 테두리 굵기 기본값
+
+% ── 헤더/푸터 ─────────────────────────────────────────────────────────────────
+% 러닝헤드는 각 문서에서 \fancyhead[R]{...}로 개별 설정
+\setlength{\headheight}{15pt}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\renewcommand{\headrule}{{\color{rulecolor}%
+  \hrule width\headwidth height\headrulewidth}}
+\renewcommand{\footrule}{{\color{rulecolor}%
+  \hrule width\headwidth height\footrulewidth}}
+\fancyfoot[C]{\small\color{midgray}\thepage}
+
+\fancypagestyle{firstpage}{
+  \fancyhf{}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+  \renewcommand{\footrule}{{\color{rulecolor}%
+    \hrule width\headwidth height\footrulewidth}}
+  \fancyfoot[C]{\small\color{midgray}\thepage}
+}
+
+% ── 섹션 서식 ─────────────────────────────────────────────────────────────────
+% section      : 17pt, 네이비, 좌측, 하단 구분선
+% subsection   : 14pt, 버건디, 좌측
+% subsubsection: 12pt, 초록,   좌측
+% 헤딩 기본 폰트는 KoPub 유지 — 그리스어는 \gr{}로 명시 전환
+\titleformat{\section}
+  {\fontsize{17pt}{22pt}\selectfont\bfseries\color{h1navy}}
+  {}{0em}{}
+  [{\vspace{4pt}\color{rulecolor}\titlerule[0.4pt]}]
+
+\titleformat{\subsection}
+  {\fontsize{14pt}{18pt}\selectfont\bfseries\color{h2burgundy}}
+  {}{0em}{}
+
+\titleformat{\subsubsection}
+  {\fontsize{12pt}{16pt}\selectfont\bfseries\color{h3green}}
+  {}{0em}{}
+
+\titlespacing{\section}      {0pt}{28pt}{10pt}
+\titlespacing{\subsection}   {0pt}{20pt}{8pt}
+\titlespacing{\subsubsection}{0pt}{14pt}{6pt}
+
+% ── 더블 칼럼 인용 환경 + 각주 설정 ─────────────────────────────────────────
+%
+% \bqnote{각주 내용}
+%   minipage 내부(번역란)에서 페이지 하단 일반 각주를 출력하는 명령어.
+%   \footnotemark로 마크만 찍고, 텍스트는 \bq@notelist 큐에 저장.
+%   \bilingualquote 환경이 colorbox 밖으로 나온 뒤 자동으로 \footnotetext 출력.
+%   \global\def로 colorbox/parbox 그룹 경계를 넘어 리스트가 유지됨.
+%   여러 개의 \bqnote를 한 \bilingualquote 안에 쓸 수 있음.
+%
+% \bilingualquote{원문}{번역}{출처}
+%   원문: 좌 55% / 번역: 우 44% / 출처: 하단 우측 정렬
+%   번역 병기 필수. 번역란 각주는 반드시 \bqnote 사용.
+%
+% \srcquote{원문}{번역}{출처}
+%   짧은 단독 원문 강조 인용
+%   원문 / 구분선 / 번역 / 출처 순으로 배치. 번역 병기 필수.
+
+\makeatletter
+
+% \bqnote: 번역란 각주 큐 시스템
+\global\def\bq@notelist{}
+
+\newcommand{\bqnote}[1]{%
+  \footnotemark%
+  \global\expandafter\def\expandafter\bq@notelist\expandafter{%
+    \bq@notelist
+    \footnotetext{#1}%
+  }%
+}
+
+\newcommand{\bilingualquote}[3]{%
+  \global\def\bq@notelist{}%
+  \vspace{8pt}%
+  \noindent\colorbox{citebg}{%
+    \parbox{\dimexpr\linewidth-2\fboxsep}{%
+      \vspace{8pt}%
+      \noindent%
+      \begin{minipage}[t]{0.53\linewidth}%
+        \setstretch{1.4}{\upshape #1}%
+      \end{minipage}%
+      \hfill%
+      \begin{minipage}[t]{0.44\linewidth}%
+        \setstretch{1.4}#2%
+      \end{minipage}%
+      \par\vspace{4pt}%
+      \noindent\hfill{\small\color{midgray} #3}%
+      \vspace{4pt}%
+    }%
+  }%
+  \bq@notelist%
+  \vspace{8pt}%
+}
+
+% 각주 설정: 번호 색상 회색, 링크 테두리 없음
+% 각주 내부 줄 간격은 1.15로 설정 (본문 1.5보다 조밀하게)
+\setlength{\footnotesep}{8pt}
+\renewcommand{\@makefnmark}{%
+  {\color{midgray}\textsuperscript{\@thefnmark}}%
+}
+\renewcommand{\@makefntext}[1]{%
+  \parindent 1em\noindent
+  {\color{midgray}\textsuperscript{\@thefnmark}}\,%
+  \setstretch{1.15}#1%
+}
+
+\makeatother
+
+% ── 참고문헌 섹션 환경 ────────────────────────────────────────────────────────
+% \begin{references} ... \end{references}
+%
+% 규칙:
+%   헤딩은 반드시 \subsubsection* (H3, 12pt 초록) 으로 작성
+%   항목 간 줄 간격은 1.0 (본문보다 조밀하게)
+%   \refitem 형식으로 항목 나열
+%   시카고 스타일 (Notes-Bibliography) 준수
+%
+% 사용 예:
+%   \begin{references}
+%   \subsubsection*{참고문헌}
+%   \refitem Ackrill, J. L. \gri{Aristotle's Categories and
+%     De Interpretatione}. Oxford: Clarendon Press, 1963.
+%   \end{references}
+
+\newenvironment{references}{%
+  \fontsize{10pt}{14pt}\selectfont%   % 본문 12pt보다 작게, 각주와 동일 크기
+  \begin{list}{}{%
+    \setlength{\leftmargin}{1.5em}%
+    \setlength{\itemindent}{-1.5em}%
+    \setlength{\itemsep}{4pt}%
+    \setlength{\parsep}{0pt}%
+    \setstretch{1.0}%
+  }%
+}{%
+  \end{list}%
+}
+
+% \refitem: 참고문헌 개별 항목
+\newcommand{\refitem}{\item}
+
+% \srcquote{원문}{번역}{출처}: 짧은 단독 원문 강조 인용
+\newcommand{\srcquote}[3]{%
+  \vspace{6pt}%
+  \noindent\colorbox{citebg}{%
+    \parbox{\dimexpr\linewidth-2\fboxsep}{%
+      \vspace{6pt}%
+      \hspace{1.8em}{\upshape #1}\hspace{1.8em}%
+      \par\vspace{4pt}%
+      {\color{rulecolor}\hrule height 0.3pt}%
+      \par\vspace{4pt}%
+      \hspace{1.8em}#2\hspace{1.8em}%
+      \par\vspace{-\parskip}\noindent\hfill{\small\color{midgray} #3}%
+      \vspace{3pt}%
+    }%
+  }%
+  \vspace{6pt}%
+}
