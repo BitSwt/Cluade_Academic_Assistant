@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 build.py — LuaLaTeX 문서 빌드 및 버전 관리 스크립트
-버전: v1_8
+버전: v1_9
 
 사용법:
     python3 build.py <tex파일명>           # minor 버전업 후 컴파일
@@ -19,14 +19,20 @@ build.py — LuaLaTeX 문서 빌드 및 버전 관리 스크립트
 
 참고:
     저술 정의(DeclareWorkGR 등)는 각 문서 프리앰블에 직접 포함한다.
-    컴파일 시작 전에 필수 폰트(KoPub 바탕체, Brill)
-    설치 여부를 자동으로 확인한다. 폰트가 없으면
-    컴파일을 중단하고 업로드를 요청한다.
+    컴파일 시작 전에 아래 항목을 자동으로 확인한다.
+      - 필수 폰트(KoPub 바탕체, Brill) 설치 여부
+      - KoNLPy 설치 여부 (미설치 시 컴파일 중단)
+      - 한국어 조사 문법 검사 (대응 .md 파일이 있을 때 자동 실행)
 
 스타일 참조:
-    master.sty            — 폰트·색상·표 서식 전역 설정
+    master.sty v1_26  — 폰트·색상·표 서식 전역 설정
     document_style_guide  — 표기 원칙 및 서식 규칙 전체
     ONBOARDING            — 프레임워크 사용법 및 명령어 목록
+
+변경 이력:
+    v1_9: check_particles_for_md() 추가
+          조사 검사(KoNLPy) 를 필수 빌드 단계로 통합
+          KoNLPy 미설치 시 컴파일 중단 (폰트 미설치와 동일 처리)
 """
 
 import os
@@ -58,8 +64,8 @@ COMPILE_PASSES = 2
 # 이 파일들이 FONT_DIR에 존재하지 않으면 컴파일을 시작하지 않는다
 FONT_DIR = Path("/usr/local/share/fonts")
 REQUIRED_FONTS = [
-    ("KoPubBatangMedium.ttf", "KoPub 바탕체 (한국어 전용)"),
-    ("KoPubBatangBold.ttf",   "KoPub 바탕체 Bold"),
+    ("KoPubWorld_Batang_Medium.ttf", "KoPub 바탕체 (한국어 전용)"),
+    ("KoPubWorld_Batang_Bold.ttf",   "KoPub 바탕체 Bold"),
     ("Brill-Roman.ttf",       "Brill (영어·라틴어·그리스어 전용)"),
     ("Brill-Bold.ttf",        "Brill Bold"),
     ("Brill-Italic.ttf",      "Brill Italic"),
@@ -373,13 +379,95 @@ def cmd_list():
         print(f"  {key:<33} {v:<10} {updated}")
 
 
+def check_particles_for_md(tex_path: Path) -> bool:
+    """
+    tex_path와 같은 이름의 .md 파일이 존재하면 조사 검사를 실행한다.
+    .md 파일이 없으면 건너뛴다(다른 종류의 문서에 영향 없음).
+
+    반환값:
+      True  → 오류가 발견되어 사용자가 진행을 중단함
+      False → 오류 없음, 또는 오류가 있어도 사용자가 계속 진행 선택
+    """
+    md_path = tex_path.with_suffix('.md')
+
+    # 프로젝트 디렉터리 외부(예: /home/claude/)에도 같은 이름의 .md가 있을 수 있음
+    # tex_path가 project/ 안에 있으면 상위 디렉터리도 탐색
+    if not md_path.exists():
+        alt_path = tex_path.parent.parent / md_path.name
+        if alt_path.exists():
+            md_path = alt_path
+
+    if not md_path.exists():
+        return False  # .md 없음 → 건너뜀
+
+    print(f"\n  ── 조사 문법 검사: {md_path.name} ──")
+
+    # KoNLPy 로딩 — 미설치 시 빌드 중단 (폰트 미설치와 동일한 처리)
+    try:
+        from konlpy.tag import Okt
+    except ImportError:
+        print("\n" + "=" * 60)
+        print("  ✗ KoNLPy가 설치되어 있지 않습니다.")
+        print("  조사 검사는 필수 단계입니다. 컴파일을 시작하지 않습니다.")
+        print("=" * 60)
+        print("\n  설치 명령:")
+        print("    pip install konlpy --break-system-packages\n")
+        sys.exit(1)
+
+    # check_particles.py가 같은 디렉터리에 있으면 모듈로 직접 import
+    checker_path = PROJECT_DIR / "check_particles.py"
+    if not checker_path.exists():
+        print("  ⚠ check_particles.py 없음 — 조사 검사를 건너뜁니다.")
+        return False
+
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("check_particles", checker_path)
+    checker = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(checker)
+
+    okt = Okt()
+    issues = checker.check_file(okt, md_path)
+
+    errors   = [i for i in issues if i["severity"] == "error"]
+    warnings = [i for i in issues if i["severity"] == "warning"]
+
+    if not issues:
+        print("  ✓ 조사 오류 없음")
+        return False
+
+    if errors:
+        print(f"\n  ✗ 조사 오류 {len(errors)}건:")
+        for issue in errors:
+            print(f"    [{issue['line']}줄]  {issue['message']}")
+
+    if warnings:
+        print(f"\n  ⚠ 폰트 경계 경고 {len(warnings)}건 (LuaTeX-ja 공백 소실 가능)")
+        # 경고는 상세 목록 대신 건수만 표시 — 너무 많으면 가독성 저하
+        if len(warnings) <= 10:
+            for issue in warnings:
+                print(f"    [{issue['line']}줄]  {issue['message']}")
+        else:
+            print(f"    (상세 목록은 check_particles.py를 직접 실행하여 확인)")
+
+    if errors:
+        print("\n  조사 오류가 있습니다. 그래도 계속 빌드하시겠습니까?")
+        print("  계속하려면 y, 중단하려면 n을 입력하세요.")
+        answer = input("  → ").strip().lower()
+        if answer != "y":
+            print("\n  빌드를 중단했습니다. 조사 오류를 수정한 뒤 다시 빌드하세요.\n")
+            return True  # 사용자가 중단 선택
+
+    return False  # 계속 진행
+
+
 def cmd_build(tex_filename: str, mode: str):
     """
     메인 빌드 명령.
     0) 폰트 설치 여부 확인 — 누락 시 즉시 중단
-    1) 버전 올리기 (mode에 따라)
-    2) LuaLaTeX 컴파일
-    3) PDF + TEX 출력 디렉터리로 복사
+    1) 조사 문법 검사 — 대응하는 .md 파일이 있을 경우 자동 실행
+    2) 버전 올리기 (mode에 따라)
+    3) LuaLaTeX 컴파일
+    4) PDF + TEX 출력 디렉터리로 복사
     """
     # 폰트 검사: 필수 폰트가 없으면 컴파일 시작하지 않음
     if not check_fonts():
@@ -391,6 +479,10 @@ def cmd_build(tex_filename: str, mode: str):
         tex_path = PROJECT_DIR / f"{tex_filename}.tex"
     if not tex_path.exists():
         print(f"  ✗ 파일을 찾을 수 없음: {tex_filename}")
+        sys.exit(1)
+
+    # 조사 문법 검사: 대응하는 .md 파일이 있을 때 자동 실행
+    if check_particles_for_md(tex_path):
         sys.exit(1)
 
     versions = load_versions()

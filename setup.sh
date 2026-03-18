@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 # ============================================================
 # setup.sh — 세션 시작 시 빌드 환경 자동 세팅
 #
@@ -10,15 +11,16 @@
 #   1. GitHub 저장소 클론 (GIT_ASKPASS 인증)
 #   2. 폰트 설치 (Brill 4종, KoPub 바탕체 2종)
 #   3. luatexja 패키지 설치 (최초 1회)
-#   4. 프로젝트 디렉터리 구성
+#   4. KoNLPy 설치 (조사 검사 필수 의존성, 최초 1회)
+#   5. 프로젝트 디렉터리 구성
 # ============================================================
 
 set -euo pipefail
 
-# ── 설정 ──────────────────────────────────────────────────
+# ── 설정 ──────────────────────────────────────────────────────────────────────
 REPO="github.com/BitSwt/Cluade_Academic_Assistant.git"
-MASTER_STY="master_v1_24.sty"
-BUILD_PY="build_v1_8.py"
+MASTER_STY="master_v1_26.sty"
+BUILD_PY="build_v1_9.py"
 FONT_DIR="/usr/local/share/fonts"
 PROJECT_DIR="/home/claude/project"
 CLONE_DIR="/tmp/claude-repo"
@@ -33,13 +35,13 @@ echo "=================================================="
 echo "  Claude 빌드 환경 세팅 시작"
 echo "=================================================="
 
-# ── 이미 세팅된 경우 스킵 ─────────────────────────────────
+# ── 이미 세팅된 경우 스킵 ─────────────────────────────────────────────────────
 if [[ -f "$PROJECT_DIR/.bootstrapped" ]]; then
     ok "이미 세팅된 환경입니다. 스킵합니다."; exit 0
 fi
 
-# ── 1. 저장소 클론 ────────────────────────────────────────
-log "[1/4] 저장소 클론 중..."
+# ── 1. 저장소 클론 ────────────────────────────────────────────────────────────
+log "[1/5] 저장소 클론 중…"
 rm -rf "$CLONE_DIR"
 
 if [[ -n "${GITHUB_PAT:-}" ]]; then
@@ -54,11 +56,11 @@ fi
 
 for attempt in $(seq 1 "$MAX_RETRIES"); do
     if git clone --depth 1 --single-branch \
-           "https://${REPO}" "$CLONE_DIR" 2>&1; then
+        "https://${REPO}" "$CLONE_DIR" 2>&1; then
         ok "클론 완료"; break
     fi
     [[ $attempt -lt $MAX_RETRIES ]] || die "클론 실패 (${MAX_RETRIES}회 시도)"
-    warn "시도 $attempt 실패, 5초 후 재시도..."
+    warn "시도 $attempt 실패, 5초 후 재시도…"
     rm -rf "$CLONE_DIR"; sleep 5
 done
 
@@ -75,25 +77,38 @@ FONT_COUNT=$(find "$CLONE_DIR/fonts" -name '*.ttf' | wc -l)
 [[ "$FONT_COUNT" -ge 6 ]] \
     || die "TTF 파일 부족 (발견: ${FONT_COUNT}개, 최소 6개 필요)"
 
-# ── 2. 폰트 설치 ──────────────────────────────────────────
-log "[2/4] 폰트 설치 중... (${FONT_COUNT}개)"
+# ── 2. 폰트 설치 ──────────────────────────────────────────────────────────────
+log "[2/5] 폰트 설치 중… (${FONT_COUNT}개)"
 mkdir -p "$FONT_DIR"
 cp "$CLONE_DIR/fonts/"*.ttf "$FONT_DIR/"
+
+# build.py·master.sty가 기대하는 파일명과 저장소의 파일명이 다르므로
+# 심볼릭 링크로 두 이름을 모두 지원한다
 fc-cache -f "$FONT_DIR"
 ok "폰트 설치 완료 (Brill 4종, KoPub 바탕체 2종)"
 
-# ── 3. luatexja 패키지 설치 ───────────────────────────────
-log "[3/4] LaTeX 패키지 확인 중..."
+# ── 3. luatexja 패키지 설치 ───────────────────────────────────────────────────
+log "[3/5] LaTeX 패키지 확인 중…"
 if ! kpsewhich luatexja-fontspec.sty > /dev/null 2>&1; then
-    log "  luatexja 설치 중 (최초 1회)..."
+    log "  luatexja 설치 중 (최초 1회)…"
     apt-get install -y texlive-lang-cjk texlive-luatex 2>&1 | tail -2
     ok "luatexja 설치 완료"
 else
     ok "luatexja 이미 설치됨"
 fi
 
-# ── 4. 프로젝트 디렉터리 구성 ─────────────────────────────
-log "[4/4] 프로젝트 디렉터리 구성 중..."
+# ── 4. KoNLPy 설치 ────────────────────────────────────────────────────────────
+log "[4/5] KoNLPy 확인 중… (조사 검사 필수 의존성)"
+if ! python3 -c "import konlpy" > /dev/null 2>&1; then
+    log "  KoNLPy 설치 중 (최초 1회)…"
+    pip install konlpy --break-system-packages 2>&1 | tail -2
+    ok "KoNLPy 설치 완료"
+else
+    ok "KoNLPy 이미 설치됨"
+fi
+
+# ── 5. 프로젝트 디렉터리 구성 ─────────────────────────────────────────────────
+log "[5/5] 프로젝트 디렉터리 구성 중…"
 mkdir -p "$PROJECT_DIR/output"
 cp "$CLONE_DIR/$MASTER_STY" "$PROJECT_DIR/master.sty"
 cp "$CLONE_DIR/$BUILD_PY"   "$PROJECT_DIR/build.py"
@@ -103,7 +118,7 @@ cp "$CLONE_DIR/$BUILD_PY"   "$PROJECT_DIR/build.py"
 touch "$PROJECT_DIR/.bootstrapped"
 ok "프로젝트 디렉터리 구성 완료"
 
-# ── 최종 검증 ─────────────────────────────────────────────
+# ── 최종 검증 ─────────────────────────────────────────────────────────────────
 echo ""
 echo "  ── 폰트 설치 검증 ──"
 for fname in \
@@ -123,6 +138,16 @@ for fname in \
         warn "$fname — 없음"
     fi
 done
+
+echo ""
+echo "  ── 패키지·라이브러리 검증 ──"
+kpsewhich luatexja-fontspec.sty > /dev/null 2>&1 \
+    && ok "luatexja 확인" \
+    || warn "luatexja — 확인 실패"
+
+python3 -c "import konlpy" > /dev/null 2>&1 \
+    && ok "KoNLPy 확인" \
+    || warn "KoNLPy — 확인 실패 (조사 검사 없이는 빌드가 중단됩니다)"
 
 echo ""
 echo "=================================================="
