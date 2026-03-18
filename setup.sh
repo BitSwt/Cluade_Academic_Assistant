@@ -21,6 +21,7 @@ set -euo pipefail
 REPO="github.com/BitSwt/Cluade_Academic_Assistant.git"
 MASTER_STY="master_v1_26.sty"
 BUILD_PY="build_v1_9.py"
+BASIC_RULES="Basic_rules.md"
 FONT_DIR="/usr/local/share/fonts"
 PROJECT_DIR="/home/claude/project"
 CLONE_DIR="/tmp/claude-repo"
@@ -69,9 +70,10 @@ rm -f /tmp/askpass.sh
 unset GIT_ASKPASS GITHUB_PAT 2>/dev/null || true
 
 # 파일 존재 확인
-[[ -d "$CLONE_DIR/fonts" ]]       || die "fonts/ 폴더 없음"
-[[ -f "$CLONE_DIR/$MASTER_STY" ]] || die "$MASTER_STY 없음"
-[[ -f "$CLONE_DIR/$BUILD_PY" ]]   || die "$BUILD_PY 없음"
+[[ -d "$CLONE_DIR/fonts" ]]           || die "fonts/ 폴더 없음"
+[[ -f "$CLONE_DIR/$MASTER_STY" ]]     || die "$MASTER_STY 없음"
+[[ -f "$CLONE_DIR/$BUILD_PY" ]]       || die "$BUILD_PY 없음"
+[[ -f "$CLONE_DIR/$BASIC_RULES" ]]    || die "$BASIC_RULES 없음"
 
 FONT_COUNT=$(find "$CLONE_DIR/fonts" -name '*.ttf' | wc -l)
 [[ "$FONT_COUNT" -ge 6 ]] \
@@ -110,8 +112,9 @@ fi
 # ── 5. 프로젝트 디렉터리 구성 ─────────────────────────────────────────────────
 log "[5/5] 프로젝트 디렉터리 구성 중…"
 mkdir -p "$PROJECT_DIR/output"
-cp "$CLONE_DIR/$MASTER_STY" "$PROJECT_DIR/master.sty"
-cp "$CLONE_DIR/$BUILD_PY"   "$PROJECT_DIR/build.py"
+cp "$CLONE_DIR/$MASTER_STY"   "$PROJECT_DIR/master.sty"
+cp "$CLONE_DIR/$BUILD_PY"     "$PROJECT_DIR/build.py"
+cp "$CLONE_DIR/$BASIC_RULES"  "$PROJECT_DIR/Basic_rules.md"
 [[ -f "$PROJECT_DIR/versions.json" ]] \
     || echo '{}' > "$PROJECT_DIR/versions.json"
 
@@ -148,6 +151,10 @@ kpsewhich luatexja-fontspec.sty > /dev/null 2>&1 \
 python3 -c "import konlpy" > /dev/null 2>&1 \
     && ok "KoNLPy 확인" \
     || warn "KoNLPy — 확인 실패 (조사 검사 없이는 빌드가 중단됩니다)"
+
+[[ -f "$PROJECT_DIR/Basic_rules.md" ]] \
+    && ok "Basic_rules.md 확인" \
+    || warn "Basic_rules.md — 없음"
 
 echo ""
 echo "=================================================="
