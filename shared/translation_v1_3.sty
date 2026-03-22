@@ -1,0 +1,86 @@
+% ============================================================
+% translation.sty — 번역본 전용 스타일 확장
+% 버전: v1_3
+%
+% 사용법: \usepackage{master} 뒤에 \usepackage{translation}
+% master.sty의 모든 설정을 상속하며, 번역본 전용 명령만 추가한다.
+%
+% 추가 명령:
+%   \margref{번호}                     — 좌측 여백 참조 번호
+%   \translationtitle{저자}{저작}{분량} — 표제 블록 (원어 전용)
+%
+% 각주: master.sty의 \footnote를 그대로 사용한다.
+%       단일 숫자 체계(1, 2, 3, …).
+%
+% 의존: master.sty
+%
+% v1_3: 표제 블록 원어 전용으로 변경. 한국어 제거.
+%       페이지 헤더도 원어 전용.
+% v1_2: \bekker → \margref 범용 명칭 변경.
+% v1_1: 이중 각주(manyfoot) 제거. 단일 \footnote 체계로 통합.
+% v1_0: 초판. bekker, 이중 각주, 표제 블록.
+% ============================================================
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{translation}[2025/03/22 v1.3 Translation Style Extension]
+
+% ── 여백 참조 번호 ──────────────────────────────────────────────────────────
+%
+% \margref{1a1}       Bekker 번호 (아리스토텔레스)
+% \margref{71a}       Stephanus 번호 (플라톤)
+% \margref{DK 28B8}   Diels–Kranz 단편 번호
+% \margref{SVF 2.54}  스토아 단편 번호
+% \margref{I.1}       장·절 번호 (범용)
+%
+% 좌측 여백에 회색 산세리프로 배치. 본문 흐름을 방해하지 않는다.
+%
+\RequirePackage{marginnote}
+\reversemarginpar
+\setlength{\marginparwidth}{25mm}
+\setlength{\marginparsep}{5mm}
+\renewcommand*{\marginfont}{\footnotesize\color{midgray}\sffamily}
+
+\newcommand{\margref}[1]{%
+  \marginnote{#1}[0pt]%
+}
+
+% ── 번역본 표제 블록 ────────────────────────────────────────────────────────
+%
+% \translationtitle{저자}{저작}{분량}
+%
+% 3줄 모두 원어로 표기한다. 한국어를 넣지 않는다.
+% \weeksection과 동일한 기본 스타일: 우측 정렬, 14pt 네이비 볼드,
+% 줄간격 1.0, 하단 구분선.
+%
+% 그리스어 저술 예:
+%   \translationtitle{Θεόφραστος}{Περὶ φυτῶν ἱστορία, \gri{Historia Plantarum}}{I.1.1--I.1.5}
+%   \translationtitle{Ἀριστοτέλης}{Κατηγορίαι, \gri{Categoriae}}{1a1--4a21}
+%   \translationtitle{Πλάτων}{Μένων, \gri{Meno}}{70a--86c}
+%
+% 라틴어 저술 예:
+%   \translationtitle{Thomas Aquinas}{\gri{Summa Theologiae}}{I, q.1--5}
+%
+% 아랍어 저술 예:
+%   \translationtitle{Ibn Sīnā}{\gri{Kitāb al-Shifāʾ}}{I.1--I.3}
+%
+% 언어 원칙:
+%   저자명: 해당 언어 원어 (그리스어·라틴어·음차)
+%   저작명: 그리스어는 비이탤릭, 그리스어·한국어 제외는 이탤릭(\gri{})
+%   분량:   Bekker·Stephanus·장절 등 참조 번호 체계
+%
+\newcommand{\translationtitle}[3]{%
+  \par\medskip
+  \begingroup
+  \setstretch{1.0}%
+  \raggedleft
+  \fontsize{14pt}{16pt}\selectfont\bfseries\color{h1navy}%
+  #1\par\nobreak
+  #2\par\nobreak
+  #3\par\nobreak
+  \endgroup
+  \vspace{4pt}%
+  {\color{rulecolor}\hrule height 0.4pt}%
+  \vspace{8pt}%
+}
+
+\endinput
