@@ -1,0 +1,85 @@
+% !TEX program = lualatex
+\documentclass[12pt, a4paper]{article}
+\usepackage{master}
+
+\DeclareWorkGR{Cat}{범주론}{Κατηγορίαι}{Categoriae}
+\DeclareWorkGR{DI}{명제론}{Περὶ ἑρμηνείας}{De interpretatione}
+\DeclareWorkGR{APr}{분석론 전서}{Ἀναλυτικὰ πρότερα}{Analytica priora}
+\DeclareWorkGR{SE}{소피스트적 논박}{Σοφιστικοὶ ἔλεγχοι}{Sophistici elenchi}
+
+\fancyhead[L]{\footnotesize\color{midgray}오르가논 강독}
+\fancyhead[R]{\footnotesize\color{midgray}제 11 주}
+
+\begin{document}
+\thispagestyle{firstpage}
+
+\weeksection{제11주}{명제론 19a23--23a26}{해전 논변의 해결, 계사, 양상 명제, 반대 믿음}
+
+\subsection{해전 논변의 해결 (9장 결론, 19a23--19b4)}
+
+\subsubsection{`있을 때의 필연'과 `무조건적 필연'}
+
+19a23--27에서 아리스토텔레스는 명제론에서 가장 유명하고 가장 논쟁적인 구절을 제시합니다.
+
+\srcquote{\gr{τὸ μὲν οὖν εἶναι τὸ ὂν ὅταν ᾖ, καὶ τὸ μὴ ὂν μὴ εἶναι ὅταν μὴ ᾖ, ἀνάγκη· … ἀλλ' οὐ τὸ ὂν ἅπαν ἀνάγκη εἶναι … οὐ γὰρ ταὐτόν ἐστι τὸ ὂν ἅπαν εἶναι ἐξ ἀνάγκης ὅτε ἔστιν, καὶ τὸ ἁπλῶς εἶναι ἐξ ἀνάγκης.}}{`있는 것은, 있을 때, 필연적으로 있다. 그러나 있는 모든 것이 필연적으로 있는 것은 아니다. 있는 모든 것이 있을 때 필연적으로 있다는 것과, 무조건적으로(\gr{ἁπλῶς}) 필연적으로 있다는 것은 같지 않기 때문이다.'}{\citework{DI}{19a23--27}}
+
+이것은 두 종류의 필연의 구별입니다: `있을 때의 필연'(\gri{necessitas consequentiae})과 `무조건적 필연'(\gri{necessitas consequentis}). 전자에서 후자로의 추론은 양상적 오류입니다.\footnote{이 구별은 중세 논리학에서 명시적으로 정식화되었습니다. Aquinas, \gri{Summa theologiae} I.14.13.}
+
+19a30--32에서 결론이 제시됩니다: `내일 해전이 있거나 없을 것이라는 것은 필연적이다. 그러나 내일 해전이 있다는 것이 필연적인 것도 아니고, 없다는 것이 필연적인 것도 아니다.' 이것은 필연의 선언지를 넘어서의 분배를 거부합니다: □(A ∨ B)에서 □A ∨ □B를 추론할 수 없습니다.\footnote{현대 양상 논리의 기호를 잠시 빌려 씁니다: □는 `필연적으로'(necessarily), ◇는 `가능하게'(possibly), ¬는 `아닌'(not), ∨는 `또는'(or), ↔는 `서로 같다'(if and only if)를 뜻합니다. □(A ∨ B)는 `A이거나 B인 것이 필연적이다'로 읽습니다.}
+
+\subsubsection{중세의 수용}
+
+보에티우스(c.\ 480--524)는 명제론에 대한 두 편의 주석서를 남겼으며, 이것이 라틴 서방에 명제론을 전달하는 주된 통로였습니다. 보에티우스는 `확정적 참'과 `비확정적 참'을 구별했습니다.\footnote{SEP, ``Medieval Theories of Future Contingents'' (Knuuttila, rev.\ 2024).} 철학의 위안(\gri{Consolatio Philosophiae} V.6)에서 보에티우스는 신이 시간 밖에 있다고 주장함으로써 해전 논변을 신학적으로 해결했습니다 --- 신의 인식은 예지가 아니라 영원한 현재의 직관이므로, `조건적 필연'이 `단순 필연'을 함축하지 않습니다.
+
+\subsection{계사와 존재 술어 (10장, 19b5--20b12)}
+
+\subsubsection{`있다'의 두 기능}
+
+19b19--22에서 아리스토텔레스는 `있다'(\gr{ἔστι})가 `추가적으로 술어되는 셋째 것'(\gr{τρίτον προσκατηγορούμενον}) --- 계사: `사람은 정의롭다' --- 으로 사용되는 경우와, `있다'가 단독 술어로 사용되어 존재를 주장하는 경우 --- `사람은 있다'(\gr{ἔστιν ἁπλῶς}) --- 를 구별합니다. 이 구별은 \citework{SE}{167a1 이하}에서 경고한 오류와 연결됩니다: `x는 F이다'에서 `x는 있다(존재한다)'를 추론하는 것은 오류입니다.
+
+\subsubsection{부정 이름과 4중 도식}
+
+10장에서 부정 이름을 체계적으로 명제 안에 도입하여, 네 가지 명제 형식을 생성합니다: A(`사람은 정의롭다'), B(`사람은 정의롭지 않다', A의 부정), C(`사람은 정의롭지-않은 것이다', 부정 술어 긍정), D(`사람은 정의롭지-않은 것이 아니다', C의 부정). C는 B를 함축하지만, B는 C를 함축하지 않습니다 --- `정의롭지-않은 것'(부정 이름)은 정의로움이 적용 가능한 대상에만 해당하므로 외연이 좁고, `정의롭지 않다'(부정)는 정의로움을 결여하는 모든 것에 해당하므로 외연이 넓습니다.
+
+\subsection{복합 명제와 단일성 (11장, 20b12--21a33)}
+
+11장은 여러 술어가 결합될 때 진정으로 단일한 명제를 형성하는 조건을 묻습니다. 기준(20b31--21a6): 그 자체로(\gr{καθ' αὑτό}) 관련된 술어들은 진정한 단일체를 형성하고, 부수적(\gr{κατὰ συμβεβηκός})인 술어들은 그렇지 않습니다. `사람은 두 발 달린 동물이다' --- 정당(정의 구성). `좋은 제화공' --- 부당(`좋은'이 `제화공'을 수식하여 다른 의미를 만듦). `죽은 사람'(21a21--23) --- `죽은'이 `사람'의 본질적 본성과 모순되므로 환원 불가능.
+
+이사고게의 다섯 술어가능자와 연결합시다: 정의에 속하는 술어들(류 + 종차)은 진정한 단일체를 형성하고, 부수적 술어들은 그렇지 않습니다. 11장의 기준은 이사고게의 본질적/부수적 구별의 명제론적 적용입니다.
+
+\subsection{양상 명제 (12--13장, 21a34--23a26)}
+
+\subsubsection{양상 명제의 모순 쌍}
+
+12장에서 핵심 원리: 양상 맥락에서 모순은 계사가 아니라 양상어 자체를 부정하여 형성됩니다. 올바른 모순 쌍: `가능하다' --- `가능하지 않다'; `필연적이다' --- `필연적이지 않다'; `불가능하다' --- `불가능하지 않다'. 주의: `가능하다'와 `가능하지 않다(않을 수 있다)'는 모순이 아닙니다 --- 둘은 양립 가능합니다.
+
+\subsubsection{\gr{δυνατόν}의 이중성}
+
+13장(22a14--22b28)은 양상 명제의 함축 관계를 배열합니다. `가능하다'(\gr{δυνατόν})에서 `필연적이지 않다'가 따라나오도록 배열하면 모순이 생깁니다: 필연적인 것은 당연히 가능하므로, `필연적이다'에서 `필연적이지 않다'가 따라나옵니다.\footnote{Marko Malink, ``Aristotle on One-Sided Possibility,'' in \gri{Logical Modalities from Aristotle to Carnap}, eds.\ M.\ Cresswell, E.\ Mares, A.\ Rini (Cambridge: Cambridge University Press, 2016).}
+
+문제의 근원은 \gr{δυνατόν}의 이중성입니다. 양면적 가능성(우연성): 있을 수도 있고 없을 수도 있음 --- `필연적이지 않고 불가능하지 않음'. 단면적 가능성: 단순히 `불가능하지 않음' --- 필연과 양립 가능. 22b22--28에서 수정이 이루어지고, 결론(23a18--20): `필연적인 것도 가능하다, 다만 모든 의미에서 그렇지는 않다.'
+
+핵심 양상 동치(22a24--31)는 현대 양상 논리의 쌍대성 법칙을 선취합니다: □p ↔ ¬◇¬p, ◇p ↔ ¬□¬p. 이 논의는 \citework{APr}{I.13, 32a18--20}의 양상 삼단논법에 직접 연결됩니다.
+
+\subsection{반대 믿음 (14장, 23a27--23b32)}
+
+마지막 장은 묻습니다: 어떤 믿음(\gr{δόξα})의 반대(\gr{ἐναντία})는 무엇인가? `좋음은 좋다'의 반대는 `좋음은 나쁘다'인가, 아니면 `좋음은 좋지 않다'인가? 아리스토텔레스는 모순적 부정이 진정한 반대라고 논증합니다 --- `좋음은 좋지 않다'는 주어의 본성을 직접 부정하므로 가장 깊이 거짓이고, `좋음은 나쁘다'는 복합적(원래의 것을 부정하는 것을 암묵적으로 포함)입니다.
+
+23a32--33의 마무리 문장 --- `말에서의 것들은 분별적 사고에서의 것들을 따른다' --- 은 1장의 의미의 삼각형을 환기합니다: 진술들 사이의 관계는 그 진술들이 표현하는 믿음들 사이의 관계를 반영합니다. 명제론은 의미론(1장)으로 시작하여 인식론(14장)으로 끝나며, 양쪽 모두 모순의 논리에 의해 지배됩니다.
+
+\subsection*{참고문헌}
+\begin{references}
+
+\refitem Ackrill, J.\ L., trans. \gri{Aristotle's Categories and De Interpretatione}. Oxford: Clarendon Press, 1963.
+
+\refitem Crivelli, Paolo. \gri{Aristotle on Truth}. Cambridge: Cambridge University Press, 2004.
+
+\refitem Frede, Dorothea. ``The Sea-Battle Reconsidered.'' \gri{Oxford Studies in Ancient Philosophy} 3 (1985): 31--87.
+
+\refitem Malink, Marko. ``Aristotle on One-Sided Possibility.'' In \gri{Logical Modalities from Aristotle to Carnap}, edited by M.\ Cresswell et al. Cambridge: Cambridge University Press, 2016.
+
+\refitem Whitaker, C.\ W.\ A. \gri{Aristotle's De Interpretatione: Contradiction and Dialectic}. Oxford: Clarendon Press, 1996.
+
+\end{references}
+
+\end{document}

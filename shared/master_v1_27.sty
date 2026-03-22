@@ -1,6 +1,6 @@
 % ============================================================
 % master.sty — 문서 작성 마스터 스타일 파일
-% 버전: v1_26
+% 버전: v1_27
 %
 % 사용법: \usepackage{master} (문서 프리앰블에 한 줄)
 % 저술 정의: 각 문서 프리앰블에 \DeclareWorkGR 등으로 직접 추가
@@ -9,6 +9,7 @@
 % v1_24: titlesec nobottomtitles* 옵션 추가
 % v1_25: tabularx 추가 / \concepttable 환경 정의
 % v1_26: footmisc [bottom] 옵션 추가 (각주 페이지 하단 고정)
+% v1_27: \setsansjfont KoPub 바탕체 통일. \weeksection 명령 추가.
 %        KoPubWorld_Batang_*.ttf 폰트 파일명 저장소 기준으로 통일
 %   - 열 너비 수동 계산 불필요: X 열이 가용 폭을 자동 분배
 %   - \begin{concepttable}{열정의} ... \end{concepttable} 형식으로 사용
@@ -16,7 +17,7 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{master}[2025/03/17 v1.26 Master Style]
+\ProvidesPackage{master}[2025/03/17 v1.27 Master Style]
 
 % ── 패키지 ────────────────────────────────────────────────────────────────────
 \RequirePackage{luatexja-fontspec}  % 한국어/서양 폰트 독립 관리
@@ -75,6 +76,13 @@
 
 % 한국어 전용: KoPub 바탕체
 \setmainjfont{KoPubWorldBatang}[
+  Path           = /usr/local/share/fonts/,
+  UprightFont    = KoPubWorld_Batang_Medium.ttf,
+  BoldFont       = KoPubWorld_Batang_Bold.ttf,
+  ItalicFont     = KoPubWorld_Batang_Medium.ttf,
+  BoldItalicFont = KoPubWorld_Batang_Bold.ttf
+]
+\setsansjfont{KoPubWorldBatang}[
   Path           = /usr/local/share/fonts/,
   UprightFont    = KoPubWorld_Batang_Medium.ttf,
   BoldFont       = KoPubWorld_Batang_Bold.ttf,
@@ -305,6 +313,24 @@
   {\fontsize{17pt}{22pt}\selectfont\bfseries\color{h1navy}}
   {}{0em}{}
   [{\vspace{4pt}\color{rulecolor}\titlerule[0.4pt]}]
+
+% \weeksection{주차}{분량}{제목}
+% 3줄 헤딩: 우측 정렬, 줄간격 1.0, 전부 14pt 네이비 볼드, 하단 구분선
+\newcommand{\weeksection}[3]{%
+  \par\medskip
+  \begingroup
+  \setstretch{1.0}%
+  \raggedleft
+  \fontsize{14pt}{16pt}\selectfont\bfseries\color{h1navy}%
+  #1\par\nobreak
+  #2\par\nobreak
+  #3\par\nobreak
+  \endgroup
+  \vspace{4pt}%
+  {\color{rulecolor}\hrule height 0.4pt}%
+  \vspace{8pt}%
+  \addcontentsline{toc}{section}{#1 --- #2: #3}%
+}
 
 \titleformat{\subsection}
   {\fontsize{14pt}{18pt}\selectfont\bfseries\color{h2burgundy}}

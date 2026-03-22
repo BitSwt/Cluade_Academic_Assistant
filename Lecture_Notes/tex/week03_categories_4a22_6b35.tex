@@ -1,0 +1,147 @@
+% !TEX program = lualatex
+\documentclass[12pt, a4paper]{article}
+\usepackage{master}
+
+\DeclareWorkGR{Cat}{범주론}{Κατηγορίαι}{Categoriae}
+\DeclareWorkGR{Phys}{자연학}{Φυσικά}{Physica}
+\DeclareWorkGR{Met}{형이상학}{Μεταφυσικά}{Metaphysica}
+\DeclareWorkGR{DI}{명제론}{Περὶ ἑρμηνείας}{De interpretatione}
+
+\fancyhead[L]{\footnotesize\color{midgray}오르가논 강독}
+\fancyhead[R]{\footnotesize\color{midgray}제3주}
+
+\begin{document}
+\thispagestyle{firstpage}
+
+\weeksection{제3주}{범주론 4a22--6b35}{반대자 수용 논변의 완결과 양 범주}
+
+\subsection{실체의 가장 고유한 특성: 진술과 믿음의 반론 (5장 후반, 4a22--4b19)}
+
+\subsubsection{반론의 제기}
+
+2주차 마지막에서 우리는 실체의 가장 고유한(\gr{μάλιστα ἴδιον}) 특성 --- 수적으로 하나이면서 반대자를 수용하는 능력 --- 을 확인했습니다. 그런데 아리스토텔레스는 스스로 이 주장에 대한 반론을 제기합니다(4a22 이하). 진술(\gr{λόγος})과 믿음(\gr{δόξα})도 반대자를 수용하는 것처럼 보이지 않는가? `그가 앉아 있다'는 진술은 그 사람이 앉아 있을 때에는 참이고, 일어났을 때에는 거짓입니다. 같은 진술이, 수적으로 하나이면서, 참과 거짓이라는 반대자를 번갈아 수용합니다.
+
+만약 이 반론이 성립한다면, 반대자를 수용하는 능력은 실체에 고유한 것이 아니게 됩니다. 진술과 믿음은 실체가 아닌데도 반대자를 수용하기 때문입니다.
+
+\subsubsection{아리스토텔레스의 이중 응답}
+
+아리스토텔레스는 이 반론에 대해 두 가지 응답을 제시합니다.
+
+첫째, 설령 진술과 믿음이 반대자를 수용한다고 인정하더라도, 실체가 반대자를 수용하는 \emph{방식}은 다릅니다. 실체는 자기 자신이 변화함으로써(\gr{αὐτὸ μεταβάλλον}) 반대자를 수용합니다.
+
+\srcquote{\gr{τὰ μὲν γὰρ ἐπὶ τῶν οὐσιῶν αὐτὰ μεταβάλλοντα δεκτικὰ τῶν ἐναντίων ἐστίν.}}{`실체의 경우, 자기 자신이 변화함으로써 반대자를 수용한다.'}{범주론 4a30}
+
+소크라테스가 차가워졌다가 뜨거워지는 것은 소크라테스 자신이 변화하는 것입니다. 반면 진술과 믿음은 자기 자신은 전혀 변하지 않고(\gr{πάντῃ πάντως ἀμετακίνητα}, `완전히 모든 점에서 불변하는'), 외부의 사태(\gr{τὸ πρᾶγμα})가 변하기 때문에 참·거짓이 바뀝니다.\footnote{`완전히 모든 점에서 불변하는'(\gr{πάντῃ πάντως ἀμετακίνητα})이라는 표현의 강조에 주목해야 합니다. 아리스토텔레스는 진술이 `약간' 변하는 것이 아니라 `전혀' 변하지 않는다고 주장합니다.}
+
+이 첫 번째 응답은 다음과 같이 결론 내려집니다.
+
+\srcquote{\gr{ὥστε τῷ τρόπῳ γε ἴδιον ἂν εἴη τῆς οὐσίας τὸ κατὰ τὴν αὑτῆς μεταβολὴν δεκτικὴν τῶν ἐναντίων εἶναι.}}{`따라서 적어도 방식에 있어서는, 자기 자신의 변화를 통해 반대자를 수용하는 것이 실체에 고유할 것이다.'}{범주론 4b2--4}
+
+{%
+\footnotesize
+\setlength{\extrarowheight}{1.5pt}%
+\renewcommand{\arraystretch}{1.1}%
+\setlength{\tabcolsep}{4pt}%
+\rowcolors{2}{altrowbg}{white}%
+\noindent\centering
+\begin{tabular}{|>{\centering\arraybackslash}m{20mm}|>{\centering\arraybackslash}m{25mm}|>{\centering\arraybackslash}m{30mm}|>{\centering\arraybackslash}m{38mm}|}
+\hline
+\rowcolor{tableheadblue}
+{\color{h1navy}\bfseries 항목} &
+{\color{h1navy}\bfseries 반대자 수용?} &
+{\color{h1navy}\bfseries 변화 주체} &
+{\color{h1navy}\bfseries 변화 방식} \\ \hline
+실체 & 수용함 & 자기 자신 & 내재적 변화 \\ \hline
+진술·믿음 & 수용하지 않음 & 외부 사태 & 외재적 관계 변동 \\ \hline
+\end{tabular}
+\par
+}
+
+\subsubsection{두 번째 응답: 진술과 믿음은 반대자를 수용하지 않는다}
+
+둘째, 아리스토텔레스는 더 나아가 진술과 믿음이 반대자를 수용한다는 전제 자체를 부정합니다(4b5--19). 진술이 참이 되거나 거짓이 되는 것은, 진술 안에서 무엇인가가 일어나기(\gr{γίγνεσθαι}) 때문이 아닙니다. 진술은 어떤 것도 받아들이지(\gr{δέχεσθαι}) 않습니다 --- 외부의 사태가 존재하거나 존재하지 않기 때문에 진술이 참이거나 거짓이라고 말해지는 것입니다. `그러므로 진술 안에서는 아무것도 일어나지 않으므로(\gr{μηδενὸς γὰρ ἐν αὐτοῖς γινομένου}), 진술은 반대자를 수용할 수 없다.'
+
+이 두 번째 응답은 첫 번째보다 훨씬 강합니다. 첫 번째는 `설령 수용한다 해도 방식이 다르다'는 양보적 논변이지만, 두 번째는 `애초에 수용하지 않는다'는 전면적 부정입니다. 애크릴(Ackrill)은 두 번째 응답이 아리스토텔레스의 최종적 입장이라고 보며, 이것을 진리의 대응론(correspondence theory of truth)의 초기 형태와 연결합니다 --- 진리는 진술의 내재적 속성이 아니라 진술과 외부 사태의 일치에 의해 성립합니다.\footnote{Ackrill, \gri{Aristotle's Categories and De Interpretatione}, 4b5--19 주석. 이 논의는 \citework{Met}{Θ.10}과 명제론의 진리론으로 발전합니다.}
+
+이 논변은 또한 실체의 존재론적 우선성(2주차 5.3절)과 연결됩니다. 실체만이 변화의 주어가 될 수 있다는 것이 5장 전체의 논지라면, 반대자 수용 논변은 바로 이 논지의 정점입니다. 실체는 단순히 다른 모든 것이 의존하는 토대(2b4--6)일 뿐 아니라, 세계에서 실제로 변화가 일어나는 유일한 장소이기도 합니다.
+
+\subsubsection{비판적 검토}
+
+이 논변이 완전히 성공적인지는 논쟁의 여지가 있습니다. 마크 코언(Marc Cohen)은 아리스토텔레스의 전체 논변이 핵심에서 선결문제를 요구한다(question-begging)고 비판합니다. 아리스토텔레스가 `수적으로 하나인 색은 동시에 희고 검지 않다'고 주장할 때, 그는 같은 범주 안에서의 변화만을 고려하고 있습니다. 그러나 비실체도 다른 범주의 속성에 대해서는 변화할 수 있습니다 --- 예컨대 한 색은 보스턴에 있다가 시애틀로 옮겨갈 수 있고, 인기 있다가 인기 없어질 수 있습니다.\footnote{Marc Cohen, ``Lecture on Categories,'' University of Washington.}
+
+여기서 사고 연습을 해봅시다. 아리스토텔레스의 논변이 옳다면, 진술 `소크라테스는 앉아 있다'가 참에서 거짓으로 바뀔 때, 변하는 것은 진술이 아니라 소크라테스입니다. 그렇다면 진술의 참·거짓은 진술 자체의 속성일까요, 아니면 진술과 세계의 관계일까요?
+
+\subsection{양 범주: 이산과 연속 (6장, 4b20--6b35)}
+
+\subsubsection{양의 두 가지 나눔}
+
+6장은 실체 다음으로 가장 상세하게 다루어지는 범주인 양(\gr{ποσόν})을 분석합니다. 아리스토텔레스는 양에 대해 서로 교차하는 두 가지 분류를 제시합니다.
+
+\srcquote{\gr{Τοῦ δὲ ποσοῦ τὸ μέν ἐστι διωρισμένον, τὸ δὲ συνεχές· καὶ τὸ μὲν ἐκ θέσιν ἐχόντων πρὸς ἄλληλα τῶν ἐν αὐτοῖς μορίων συνέστηκε, τὸ δὲ οὐκ ἐξ ἐχόντων θέσιν.}}{`양 가운데 어떤 것은 이산적이고 어떤 것은 연속적이다. 그리고 어떤 것은 자기 안의 부분들이 서로에 대해 위치를 가지는 것들로 구성되고, 어떤 것은 위치를 가지지 않는 것들로 구성된다.'}{범주론 4b20--22}
+
+첫 번째 분류는 이산(\gr{διωρισμένον})과 연속(\gr{συνεχές})의 구별입니다. 그 기준은 부분들이 공통 경계(\gr{κοινὸν ὅρον})를 공유하는지 여부입니다. 두 번째 분류는 부분들의 위치(\gr{θέσις})에 관한 것입니다.
+
+\subsubsection{이산적인 양: 수와 언어}
+
+아리스토텔레스가 드는 이산적인 양의 예는 수(\gr{ἀριθμός})와 언어(\gr{λόγος})입니다. 수의 경우, 예컨대 10이 5와 5로 나뉠 때, 두 5는 공통 경계에서 만나지 않습니다. 언어의 경우, 발화된 말은 장단 음절로 측정되므로 양이지만, 음절들은 공통 경계에서 이어지지 않고 각각 독립적입니다.
+
+\subsubsection{연속적인 양: 선, 면, 입체, 시간, 장소}
+
+연속적인 양의 예는 선(\gr{γραμμή}), 면(\gr{ἐπιφάνεια}), 입체(\gr{σῶμα}), 그리고 시간(\gr{χρόνος})과 장소(\gr{τόπος})입니다. 선의 부분들은 점(\gr{σημεῖον})이라는 공통 경계에서, 면의 부분들은 선에서, 입체의 부분들은 선이나 면에서 이어집니다. 시간의 부분들은 `지금'(\gr{τὸ νῦν})이라는 공통 경계에서 이어집니다.
+
+이 두 분류를 교차시키면 다음과 같은 구조가 나옵니다.
+
+{%
+\footnotesize
+\setlength{\extrarowheight}{1.5pt}%
+\renewcommand{\arraystretch}{1.1}%
+\setlength{\tabcolsep}{4pt}%
+\rowcolors{2}{altrowbg}{white}%
+\noindent\centering
+\begin{tabular}{|>{\centering\arraybackslash}m{25mm}|>{\centering\arraybackslash}m{42mm}|>{\centering\arraybackslash}m{42mm}|}
+\hline
+\rowcolor{tableheadblue}
+{\color{h1navy}\bfseries} &
+{\color{h1navy}\bfseries 부분에 위치 있음} &
+{\color{h1navy}\bfseries 부분에 위치 없음} \\ \hline
+{\bfseries 연속적} & 선, 면, 입체, 장소 & 시간 \\ \hline
+{\bfseries 이산적} & (해당 없음) & 수, 언어 \\ \hline
+\end{tabular}
+\par
+}
+
+\subsubsection{시간의 특수한 지위: 연속이면서 위치가 없는 것}
+
+이 도표에서 가장 흥미로운 칸은 시간입니다. 시간은 연속적인 양입니다 --- 과거와 미래가 `지금'이라는 공통 경계에서 이어지니까요. 그러나 시간의 부분들은 위치를 가지지 않습니다. 아리스토텔레스가 제시하는 이유는 이것입니다: 시간의 부분들 가운데 어느 것도 존속하지(\gr{ὑπομένει}) 않기 때문입니다(5a26--28). 과거의 순간은 이미 지나갔고, 미래의 순간은 아직 오지 않았으며, 현재의 `지금'은 순간적인 경계일 뿐입니다. 위치를 갖기 위해서는 부분들이 공간적으로 공존해야 하는데, 시간의 부분들은 공존하지 않습니다.
+
+이것은 시간의 존재론에 관한 심오한 통찰입니다. 선의 부분들은 동시에 존재합니다 --- 선분의 왼쪽 절반과 오른쪽 절반은 지금 함께 있습니다. 그러나 시간의 부분들은 결코 동시에 존재하지 않습니다. 이 논의는 \citework{Phys}{IV권}에서 시간의 본성에 대한 본격적인 탐구로 이어집니다.
+
+스터트만(Studtmann)의 통합적 해석에 따르면, 시간은 양의 기본 종류가 아니라 파생적인 양입니다. 아리스토텔레스는 자연학에서 시간을 `운동의 수'(\gr{ἀριθμὸς κινήσεως}, \citework{Phys}{219b2})로 정의하는데, 이것은 시간이 본질적으로는 이산적(수의 일종)이면서 운동의 연속성에 의해 파생적으로 연속적이기도 하다는 이중 성격을 부여합니다.\footnote{Paul Studtmann, ``Aristotle's Category of Quantity: A Unified Interpretation,'' \gri{Apeiron} 37, no.\ 1 (2004): 69--91.}
+
+\subsubsection{양의 특성: 반대 없음, 정도 없음}
+
+6장의 후반부(5b10 이하)에서 아리스토텔레스는 양에 고유한 특성들을 논합니다. 양에는 반대(\gr{ἐναντίον})가 없습니다 --- `두 자'에 반대되는 것은 없고, `셋'에 반대되는 것도 없습니다. 다만 `많다'(\gr{πολύ})와 `적다'(\gr{ὀλίγον})가 반대인 것처럼 보이지만, 이것들은 확정된 양이 아니라 관계(\gr{πρός τι})에 가깝습니다. 또한 양은 정도의 차이(\gr{μᾶλλον καὶ ἧττον})를 허용하지 않습니다 --- 3자는 다른 3자보다 `더 3자'이지 않습니다.
+
+양에 가장 고유한 특성은 같음(\gr{ἴσον})과 같지 않음(\gr{ἄνισον})입니다. 양적인 것들은 같거나 같지 않다고 말해지지만, 다른 범주의 것들은 이렇게 말해지지 않습니다 --- 흼은 다른 흼과 `같다'고 하지 않고 `비슷하다'(\gr{ὅμοιον})고 합니다.
+
+여기서 사고 연습을 해봅시다. 아리스토텔레스는 `언어'(\gr{λόγος})를 이산적 양으로 분류합니다. 그런데 발화된 말이 정말 양일까요? 스터트만은 언어가 양 범주의 다른 종류들과 잘 맞지 않으며, 오히려 질 범주(감각적 질)에 속해야 할 수 있다고 지적합니다.\footnote{Studtmann, ``Aristotle's Category of Quantity,'' 82--83. 형이상학의 양 범주 논의에서 언어는 아예 빠져 있습니다.}
+
+% ── 참고문헌 ──
+\subsection*{참고문헌}
+\begin{references}
+
+\refitem Ackrill, J.\ L. \gri{Aristotle's Categories and De Interpretatione}. Clarendon Aristotle Series. Oxford: Clarendon Press, 1963.
+
+\refitem Cohen, Marc. ``Lecture on Categories.'' University of Washington.
+
+\refitem Gregoric, Pavel. ``Quantities and Contraries: Aristotle's Categories 6, 5b11--6a18.'' \gri{Apeiron} 39, no.\ 4 (2006): 341--358.
+
+\refitem Minio-Paluello, L., ed. \gri{Aristotelis Categoriae et Liber de Interpretatione}. OCT. Oxford: Clarendon Press, 1949; repr.\ with corrections, 1956. Eng.\ trans.: J.\ L.\ Ackrill, \gri{Aristotle's Categories and De Interpretatione}, Clarendon Aristotle Series. Oxford: Clarendon Press, 1963.
+
+\refitem Studtmann, Paul. ``Aristotle's Categories.'' In \gri{Stanford Encyclopedia of Philosophy}.\newline https://plato.stanford.edu/entries/aristotle-categories/.
+
+\refitem ---. ``Aristotle's Category of Quantity: A Unified Interpretation.'' \gri{Apeiron} 37, no.\ 1 (2004): 69--91.
+
+\end{references}
+
+\end{document}
