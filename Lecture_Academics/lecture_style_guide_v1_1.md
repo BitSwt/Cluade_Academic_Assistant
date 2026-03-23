@@ -136,30 +136,40 @@
 
 ---
 
-## `wrapfig` / `wraptable` 사용 규칙
+## 표·도식의 크기와 배치 (강의록)
 
-`master.sty`에서 `wrapfig` 패키지가 로드되며, 여백이 설정되어 있다(`\intextsep` 12pt, `\columnsep` 16pt).
+공통 규칙(`style_guide v4_0`의 "표·도식의 크기와 배치")을 기반으로 하며, 강의록 고유 사항만 추가한다.
 
-### 사용 기준
+### 강의록에서의 텍스트랩 활용
 
-| 상황 | 환경 |
-|------|------|
-| 본문 옆에 놓을 수 있는 작은 도식/표 (폭 ≤ 65mm, 높이 ≤ 8행) | `wrapfigure` 또는 `wraptable` |
-| 전체 폭을 차지해야 하는 표/도식 | `center` + `longtable`/`concepttable`/tikz |
+강의록은 개념 설명이 긴 산문 형태이므로, 작은 도식·표를 텍스트랩으로 본문 옆에 배치하면 시각적 참조와 설명이 동시에 이루어져 효과적이다. 다음 경우에 텍스트랩을 우선 고려한다:
 
-### 사용법
+- 2×2 분류 격자 (사중 분류 등) — 65mm 이내로 축소 가능
+- 짧은 개념 대조표 (3–4행) — `wraptable`로 본문 옆 배치
+- 간단한 위계 도식 (3단 이내) — `wrapfigure`로 축소 배치
+
+### tikz 도식 축소
+
+tikz 도식이 `wrapfigure` 안에 들어갈 때는 `[scale=0.7]` 또는 `[scale=0.8]`로 축소한다. 도식 내부 텍스트가 읽기 어려울 정도로 작아지면 전체 폭 배치로 전환한다.
+
+### `concepttable`과 텍스트랩
+
+`concepttable`은 `tabulary` 기반이므로 전체 폭(`\linewidth`)에 맞춰진다. 텍스트랩 안에서는 사용할 수 없다. 텍스트랩 안에 표를 넣을 때는 `tabular` 환경을 사용하고, 열 너비를 직접 지정한다.
 
 ```latex
-\begin{wrapfigure}{r}{60mm}
+\begin{wraptable}{r}{55mm}
   \centering
-  \begin{tikzpicture}
-    % 도식 코드
-  \end{tikzpicture}
-  \caption*{도식 설명}
-\end{wrapfigure}
+  \small
+  \begin{tabular}{|l|l|}
+  \hline
+  \rowcolor{tableheadblue}
+  {\color{h1navy}\bfseries 개념} & {\color{h1navy}\bfseries 정의} \\ \hline
+  제1실체 & 이 소크라테스 \\ \hline
+  제2실체 & 사람, 동물 \\ \hline
+  \end{tabular}
+  \caption*{\small 실체의 두 종류}
+\end{wraptable}
 ```
-
-**주의사항:** `wrapfigure`/`wraptable`은 페이지 상단·하단·단락 시작 직후에서만 안정적으로 작동한다. `\needspace`와 함께 사용하여 페이지 넘김 문제를 방지한다.
 
 ---
 
