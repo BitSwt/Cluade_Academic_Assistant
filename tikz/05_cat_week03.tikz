@@ -1,0 +1,23 @@
+\needspace{8\baselineskip}
+\begin{center}
+{\small\bfseries 양의 분류 (범주론 6장, 4b20--6a35)}
+\vspace{6pt}
+\begin{tikzpicture}[font=\small,
+  box/.style={draw, rounded corners=3pt, minimum width=3.2cm, minimum height=0.8cm, align=center}]
+\node[box, fill=blue!8] (q) at (3, 3) {\textbf{\gr{ποσόν}} (양)};
+\node[box, fill=green!8] (disc) at (0, 1.5) {이산량\\(\gr{τὸ διωρισμένον})};
+\node[box, fill=orange!8] (cont) at (6, 1.5) {연속량\\(\gr{τὸ συνεχές})};
+\node[font=\scriptsize] (d1) at (-1, 0) {수};
+\node[font=\scriptsize] (d2) at (1, 0) {말(언어)};
+\node[font=\scriptsize] (c1) at (4.5, 0) {선, 면, 물체};
+\node[font=\scriptsize] (c2) at (7.5, 0) {시간, 장소};
+\draw[thick] (q) -- (disc);
+\draw[thick] (q) -- (cont);
+\draw (disc) -- (d1);
+\draw (disc) -- (d2);
+\draw (cont) -- (c1);
+\draw (cont) -- (c2);
+\node[font=\scriptsize, text=gray] at (0, -0.6) {공유 경계 없음};
+\node[font=\scriptsize, text=gray] at (6, -0.6) {공유 경계 있음};
+\end{tikzpicture}
+\end{center}

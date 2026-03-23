@@ -1,174 +1,133 @@
 #!/usr/bin/env bash
-
-# ============================================================
-# setup.sh — 세션 시작 시 빌드 환경 자동 세팅
-#
-# 사용법:
-#   bash setup.sh
-#
-# 비공개 저장소:
-#   GITHUB_PAT=<토큰> bash setup.sh
-# ============================================================
-
+# setup.sh v2_0 — 세션 시작 시 빌드 환경 자동 세팅
 set -euo pipefail
 
-# ── 설정 ──────────────────────────────────────────────────────────────────────
 REPO="github.com/BitSwt/Cluade_Academic_Assistant.git"
 FONT_DIR="/usr/local/share/fonts"
 PROJECT_DIR="/home/claude/project"
 CLONE_DIR="/tmp/claude-repo"
+OUTPUT_DIR="/mnt/user-data/outputs"
 MAX_RETRIES=3
 
 log()  { printf '[%s] %s\n' "$(date +%H:%M:%S)" "$*"; }
 die()  { log "FATAL: $*" >&2; exit 1; }
 ok()   { log "  ✓ $*"; }
-warn() { log "  ⚠ $*"; }
 
 echo "=================================================="
-echo "  Claude 빌드 환경 세팅 시작"
+echo "  Claude 빌드 환경 세팅 v2_0"
 echo "=================================================="
 
-# ── 이미 세팅된 경우 스킵 ─────────────────────────────────────────────────────
+FORCE="${1:-}"
+CLONE_HASH=""
+if [[ -d "$CLONE_DIR/.git" ]]; then
+    CLONE_HASH=$(cd "$CLONE_DIR" && git rev-parse --short HEAD 2>/dev/null || echo "")
+fi
+SAVED_HASH=""
 if [[ -f "$PROJECT_DIR/.bootstrapped" ]]; then
-    ok "이미 세팅된 환경입니다. 스킵합니다."; exit 0
+    SAVED_HASH=$(cat "$PROJECT_DIR/.bootstrapped")
 fi
 
-# ── 1. 저장소 클론 ────────────────────────────────────────────────────────────
-log "[1/5] 저장소 클론 중…"
-rm -rf "$CLONE_DIR"
-
-if [[ -n "${GITHUB_PAT:-}" ]]; then
-    printf '#!/bin/sh\nexec printf "%%s" "$GITHUB_PAT"\n' > /tmp/askpass.sh
-    chmod +x /tmp/askpass.sh
-    export GIT_ASKPASS=/tmp/askpass.sh
-    log "  비공개 저장소 인증 활성화 (GIT_ASKPASS)"
-else
-    log "  공개 저장소 모드"
-fi
-
-for attempt in $(seq 1 "$MAX_RETRIES"); do
-    if git clone --depth 1 --single-branch \
-        "https://${REPO}" "$CLONE_DIR" 2>&1; then
-        ok "클론 완료"; break
+if [[ -f "$PROJECT_DIR/.bootstrapped" ]] && [[ "$FORCE" != "--force" ]]; then
+    if [[ -n "$CLONE_HASH" ]] && [[ "$SAVED_HASH" != "$CLONE_HASH" ]]; then
+        log "레포 업데이트 감지 ($SAVED_HASH → $CLONE_HASH). 재세팅합니다."
+    else
+        ok "이미 세팅됨. 재세팅: bash setup.sh --force"; exit 0
     fi
-    [[ $attempt -lt $MAX_RETRIES ]] || die "클론 실패 (${MAX_RETRIES}회 시도)"
-    warn "시도 $attempt 실패, 5초 후 재시도…"
-    rm -rf "$CLONE_DIR"; sleep 5
-done
+fi
 
-rm -f /tmp/askpass.sh
-unset GIT_ASKPASS GITHUB_PAT 2>/dev/null || true
+log "[1/5] 저장소 클론…"
+if [[ ! -d "$CLONE_DIR/.git" ]]; then
+    rm -rf "$CLONE_DIR"
+    if [[ -n "${GITHUB_PAT:-}" ]]; then
+        printf '#!/bin/sh\nexec printf "%%s" "$GITHUB_PAT"\n' > /tmp/askpass.sh
+        chmod +x /tmp/askpass.sh; export GIT_ASKPASS=/tmp/askpass.sh
+    fi
+    for i in $(seq 1 "$MAX_RETRIES"); do
+        git clone --depth 1 "https://${REPO}" "$CLONE_DIR" 2>&1 && break
+        [[ $i -lt $MAX_RETRIES ]] || die "클론 실패"
+        sleep 5
+    done
+    rm -f /tmp/askpass.sh; unset GIT_ASKPASS GITHUB_PAT 2>/dev/null || true
+else
+    cd "$CLONE_DIR" && git pull 2>&1 | tail -1
+fi
+ok "레포 준비 완료"
 
-# 필수 디렉터리·파일 확인
-[[ -d "$CLONE_DIR/fonts" ]]                        || die "fonts/ 폴더 없음"
-[[ -d "$CLONE_DIR/shared" ]]                       || die "shared/ 폴더 없음"
-[[ -d "$CLONE_DIR/General_Academics" ]]            || die "General_Academics/ 폴더 없음"
-[[ -d "$CLONE_DIR/Lecture_Academics" ]]            || die "Lecture_Academics/ 폴더 없음"
-[[ -d "$CLONE_DIR/Translation_Academics" ]]        || die "Translation_Academics/ 폴더 없음"
-[[ -f "$CLONE_DIR/shared/master_v1_27.sty" ]]      || die "master_v1_27.sty 없음"
-[[ -f "$CLONE_DIR/shared/build_v1_9.py" ]]         || die "build_v1_9.py 없음"
-[[ -f "$CLONE_DIR/shared/translation_v1_3.sty" ]]  || die "translation_v1_3.sty 없음"
+# build_v2_0 또는 build_v1_9 확인
+BUILD_SRC="$CLONE_DIR/shared/build_v2_0.py"
+[[ -f "$BUILD_SRC" ]] || BUILD_SRC="$CLONE_DIR/shared/build_v1_9.py"
+[[ -f "$BUILD_SRC" ]] || die "build 스크립트 없음"
 
-FONT_COUNT=$(find "$CLONE_DIR/fonts" -name '*.ttf' | wc -l)
-[[ "$FONT_COUNT" -ge 6 ]] \
-    || die "TTF 파일 부족 (발견: ${FONT_COUNT}개, 최소 6개 필요)"
-
-# ── 2. 폰트 설치 ──────────────────────────────────────────────────────────────
-log "[2/5] 폰트 설치 중… (${FONT_COUNT}개)"
+log "[2/5] 폰트 설치…"
 mkdir -p "$FONT_DIR"
 cp "$CLONE_DIR/fonts/"*.ttf "$FONT_DIR/"
 fc-cache -f "$FONT_DIR"
-ok "폰트 설치 완료 (Brill 4종, KoPub 바탕체 2종)"
+ok "폰트 완료"
 
-# ── 3. luatexja 패키지 설치 ───────────────────────────────────────────────────
-log "[3/5] LaTeX 패키지 확인 중…"
-if ! kpsewhich luatexja-fontspec.sty > /dev/null 2>&1; then
-    log "  luatexja 설치 중 (최초 1회)…"
-    apt-get install -y texlive-lang-cjk texlive-luatex 2>&1 | tail -2
-    ok "luatexja 설치 완료"
-else
-    ok "luatexja 이미 설치됨"
-fi
+log "[3/5] 의존성…"
+kpsewhich luatexja-fontspec.sty > /dev/null 2>&1 \
+    && ok "luatexja OK" \
+    || { apt-get install -y texlive-lang-cjk texlive-luatex 2>&1 | tail -2; ok "luatexja 설치"; }
+python3 -c "import konlpy" > /dev/null 2>&1 \
+    && ok "KoNLPy OK" \
+    || { pip install konlpy --break-system-packages 2>&1 | tail -2; ok "KoNLPy 설치"; }
 
-# ── 4. KoNLPy 설치 ────────────────────────────────────────────────────────────
-log "[4/5] KoNLPy 확인 중… (조사 검사 필수 의존성)"
-if ! python3 -c "import konlpy" > /dev/null 2>&1; then
-    log "  KoNLPy 설치 중 (최초 1회)…"
-    pip install konlpy --break-system-packages 2>&1 | tail -2
-    ok "KoNLPy 설치 완료"
-else
-    ok "KoNLPy 이미 설치됨"
-fi
+log "[4/5] 프로젝트 구성…"
+mkdir -p "$PROJECT_DIR" \
+         "$OUTPUT_DIR/lecture_pdfs" "$OUTPUT_DIR/lecture_drafts" \
+         "$OUTPUT_DIR/translation_pdfs" "$OUTPUT_DIR/translation_drafts"
 
-# ── 5. 프로젝트 디렉터리 구성 ─────────────────────────────────────────────────
-log "[5/5] 프로젝트 디렉터리 구성 중…"
-mkdir -p "$PROJECT_DIR/output"
+cp "$CLONE_DIR/shared/master_v1_27.sty"     "$PROJECT_DIR/master.sty"
+cp "$CLONE_DIR/shared/translation_v1_3.sty" "$PROJECT_DIR/translation.sty"
+cp "$BUILD_SRC"                             "$PROJECT_DIR/build.py"
 
-# 빌드 도구
-cp "$CLONE_DIR/shared/master_v1_27.sty"        "$PROJECT_DIR/master.sty"
-cp "$CLONE_DIR/shared/build_v1_9.py"           "$PROJECT_DIR/build.py"
-cp "$CLONE_DIR/shared/translation_v1_3.sty"    "$PROJECT_DIR/translation.sty"
-
-# 규칙 문서: 공통 + 강의록 + 번역본 전부 복사
-cp "$CLONE_DIR/General_Academics/"*.md          "$PROJECT_DIR/"
-cp "$CLONE_DIR/Lecture_Academics/"*.md          "$PROJECT_DIR/"
-cp "$CLONE_DIR/Translation_Academics/"*.md      "$PROJECT_DIR/"
-
-[[ -f "$PROJECT_DIR/versions.json" ]] \
-    || echo '{}' > "$PROJECT_DIR/versions.json"
-
-touch "$PROJECT_DIR/.bootstrapped"
-ok "프로젝트 디렉터리 구성 완료"
-
-# ── 최종 검증 ─────────────────────────────────────────────────────────────────
-echo ""
-echo "  ── 폰트 설치 검증 ──"
-for fname in \
-    "Brill-Roman.ttf" \
-    "Brill-Bold.ttf" \
-    "Brill-Italic.ttf" \
-    "Brill-BoldItalic.ttf" \
-    "KoPubWorld_Batang_Medium.ttf" \
-    "KoPubWorld_Batang_Bold.ttf"; do
-    f="$FONT_DIR/$fname"
-    if [[ -e "$f" ]]; then
-        size=$(du -k "$f" | cut -f1)
-        [[ "$size" -gt 10 ]] \
-            && ok "$fname (${size}KB)" \
-            || warn "$fname — 파일 크기 이상 (${size}KB)"
-    else
-        warn "$fname — 없음"
-    fi
+for f in qa_check.py compliance_check.py md2tex.py insert_tikz.py tex_common.py; do
+    [[ -f "$CLONE_DIR/shared/$f" ]] && cp "$CLONE_DIR/shared/$f" "$PROJECT_DIR/$f"
 done
 
-echo ""
-echo "  ── 패키지·라이브러리 검증 ──"
-kpsewhich luatexja-fontspec.sty > /dev/null 2>&1 \
-    && ok "luatexja 확인" \
-    || warn "luatexja — 확인 실패"
+# ── 번역본 전용 변환기 ──
+[[ -f "$CLONE_DIR/Translation_Academics/md_to_tex.py" ]] \
+    && cp "$CLONE_DIR/Translation_Academics/md_to_tex.py" "$PROJECT_DIR/trans_md_to_tex.py"
 
-python3 -c "import konlpy" > /dev/null 2>&1 \
-    && ok "KoNLPy 확인" \
-    || warn "KoNLPy — 확인 실패 (조사 검사 없이는 빌드가 중단됩니다)"
+# ── tikz 도식 파일 ──
+if [[ -d "$CLONE_DIR/tikz" ]]; then
+    mkdir -p "$PROJECT_DIR/tikz"
+    cp "$CLONE_DIR/tikz/"*.tikz "$PROJECT_DIR/tikz/" 2>/dev/null
+    ok "tikz/ 디렉터리 배치 ($(ls "$PROJECT_DIR/tikz/"*.tikz 2>/dev/null | wc -l)개)"
+fi
 
-echo ""
-echo "  ── 프로젝트 파일 검증 ──"
-[[ -f "$PROJECT_DIR/master.sty" ]]       && ok "master.sty"       || warn "master.sty — 없음"
-[[ -f "$PROJECT_DIR/build.py" ]]         && ok "build.py"         || warn "build.py — 없음"
-[[ -f "$PROJECT_DIR/translation.sty" ]]  && ok "translation.sty"  || warn "translation.sty — 없음"
-[[ -f "$PROJECT_DIR/Basic_rules.md" ]]   && ok "Basic_rules.md"   || warn "Basic_rules.md — 없음"
-[[ -f "$PROJECT_DIR/style_guide_v4_0.md" ]] \
-    && ok "style_guide_v4_0.md (공통)" \
-    || warn "style_guide_v4_0.md — 없음"
-[[ -f "$PROJECT_DIR/lecture_style_guide_v1_0.md" ]] \
-    && ok "lecture_style_guide_v1_0.md" \
-    || warn "lecture_style_guide_v1_0.md — 없음"
-[[ -f "$PROJECT_DIR/translation_style_guide_v1_2.md" ]] \
-    && ok "translation_style_guide_v1_2.md" \
-    || warn "translation_style_guide_v1_2.md — 없음"
+cp "$CLONE_DIR/General_Academics/"*.md     "$PROJECT_DIR/" 2>/dev/null || true
+cp "$CLONE_DIR/Lecture_Academics/"*.md     "$PROJECT_DIR/" 2>/dev/null || true
+cp "$CLONE_DIR/Translation_Academics/"*.md "$PROJECT_DIR/" 2>/dev/null || true
+
+[[ -f "$PROJECT_DIR/versions.json" ]] || echo '{}' > "$PROJECT_DIR/versions.json"
+# 커밋 해시 기록 (레포 업데이트 감지용)
+CLONE_HASH=$(cd "$CLONE_DIR" && git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+echo "$CLONE_HASH" > "$PROJECT_DIR/.bootstrapped"
+ok "구성 완료 (hash: $CLONE_HASH)"
+
+log "[5/5] 검증…"
+C=0; P=0
+v() { C=$((C+1)); [[ -e "$1" ]] && { P=$((P+1)); ok "$2"; } || log "  ⚠ $2 없음"; }
+
+v "$FONT_DIR/Brill-Roman.ttf"                    "Brill"
+v "$FONT_DIR/KoPubWorld_Batang_Medium.ttf"       "KoPub"
+v "$PROJECT_DIR/master.sty"                      "master.sty"
+v "$PROJECT_DIR/build.py"                        "build.py"
+v "$PROJECT_DIR/qa_check.py"                     "qa_check.py"
+v "$PROJECT_DIR/compliance_check.py"             "compliance_check.py"
+v "$PROJECT_DIR/Basic_rules.md"                  "Basic_rules"
+v "$PROJECT_DIR/style_guide_v4_0.md"             "style_guide"
 
 echo ""
 echo "=================================================="
-echo "  ✓ 세팅 완료. 빌드를 시작할 수 있습니다."
-echo "  cd $PROJECT_DIR && python3 build.py <파일명>.tex"
+echo "  ✓ 세팅 완료 ($P/$C)"
+echo "  cd $PROJECT_DIR"
+echo ""
+echo "  ⚠ 레포 우선 원칙: 문서 작성·변환·빌드·검수는"
+echo "    레포의 스크립트와 규칙 문서를 엄격히 따른다."
+echo "    즉석 스크립트를 새로 만들지 않는다."
+echo ""
+echo "  python3 build.py --all --qa    # 전체 빌드+검수"
+echo "  python3 build.py --compliance  # 집필 지침 검수"
 echo "=================================================="

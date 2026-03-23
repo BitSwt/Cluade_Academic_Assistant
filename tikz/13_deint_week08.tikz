@@ -1,0 +1,14 @@
+\needspace{10\baselineskip}
+\begin{center}
+{\small\bfseries 의미의 삼각형 (명제론 16a3--8)}
+\vspace{6pt}
+\begin{tikzpicture}[>=stealth, font=\small,
+  box/.style={draw, rounded corners=3pt, minimum width=3.5cm, minimum height=1cm, align=center}]
+\node[box, fill=blue!8] (word) at (0, 0) {\textbf{발화된 말}\\(\gr{φωναί})};
+\node[box, fill=green!8] (thought) at (4, 3) {\textbf{영혼의 경험}\\(\gr{παθήματα τῆς ψυχῆς})};
+\node[box, fill=orange!8] (thing) at (8, 0) {\textbf{사물}\\(\gr{πράγματα})};
+\draw[->, thick] (word) -- node[left, font=\scriptsize, align=right] {상징\\(\gr{σύμβολα})\\관습적} (thought);
+\draw[->, thick] (thought) -- node[right, font=\scriptsize, align=left] {모상\\(\gr{ὁμοιώματα})\\자연적} (thing);
+\draw[dashed, gray] (word) -- node[below, font=\scriptsize] {간접적} (thing);
+\end{tikzpicture}
+\end{center}

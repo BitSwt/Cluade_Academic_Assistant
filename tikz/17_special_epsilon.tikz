@@ -1,0 +1,15 @@
+\needspace{10\baselineskip}
+\begin{center}
+{\small\bfseries 세 저작의 합류: 항 --- 술어 --- 명제 --- 추론}
+\vspace{6pt}
+\begin{tikzpicture}[>=stealth, font=\small,
+  box/.style={draw, rounded corners=3pt, minimum width=5.5cm, minimum height=1cm, align=center}]
+\node[box, fill=blue!8] (cat) at (0, 0) {\textbf{범주론}: \gr{οὐσία}, \gr{ποσόν}, \gr{ποιόν}, \gr{πρός τι} ...};
+\node[box, fill=green!8] (isag) at (0, 1.8) {\textbf{이사고게}: 류, 종, 종차, 고유성, 부수성};
+\node[box, fill=orange!8] (deint) at (0, 3.6) {\textbf{명제론}: \gr{κατάφασις}/\gr{ἀπόφασις}, 대당, 양상};
+\node[box, fill=red!8, dashed] (anal) at (0, 5.4) {\textbf{분석론} (다음 강독)};
+\draw[->, very thick] (cat) -- node[right, font=\scriptsize] {항이 술어 관계를 맺고} (isag);
+\draw[->, very thick] (isag) -- node[right, font=\scriptsize] {술어가 명제를 이루어 참/거짓이 되고} (deint);
+\draw[->, very thick] (deint) -- node[right, font=\scriptsize] {명제가 전제를 이루어 추론이 된다} (anal);
+\end{tikzpicture}
+\end{center}

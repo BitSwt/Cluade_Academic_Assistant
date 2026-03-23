@@ -1,0 +1,11 @@
+\needspace{6\baselineskip}
+\begin{center}
+{\small\bfseries 대립의 네 유형 (후범주론 10장, 11b17--14a25)}
+\vspace{6pt}
+\begin{tikzpicture}[typ/.style={draw, rounded corners=3pt, minimum width=2.8cm, minimum height=1.6cm, align=center, font=\small}]
+\node[typ, fill=blue!6] at (0, 0) {\textbf{상관자}\\\gr{τὰ πρός τι}\\[2pt]{\scriptsize 두 배 -- 절반}};
+\node[typ, fill=red!6] at (3.5, 0) {\textbf{반대자}\\\gr{τὰ ἐναντία}\\[2pt]{\scriptsize 흼 -- 검음}};
+\node[typ, fill=green!6] at (7, 0) {\textbf{결여/소유}\\\gr{στέρησις/ἕξις}\\[2pt]{\scriptsize 눈멂 -- 시력}};
+\node[typ, fill=orange!6] at (10.5, 0) {\textbf{긍정/부정}\\\gr{κατάφ./ἀπόφ.}\\[2pt]{\scriptsize 있다 -- 아니다}};
+\end{tikzpicture}
+\end{center}

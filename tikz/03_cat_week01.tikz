@@ -1,0 +1,11 @@
+\needspace{10\baselineskip}
+\begin{center}
+{\small\bfseries 사중 분류 (범주론 1a20--1b9)}
+\vspace{6pt}
+\begin{tikzpicture}[box/.style={draw, rounded corners=3pt, minimum width=4.8cm, minimum height=1.5cm, align=center, font=\small}]
+\node[box, fill=blue!6] at (0, 2.2) {(a) 주어에 대해 말해지고\\주어 안에 있지 않음\\[2pt]{\scriptsize 제2실체: \gr{ἄνθρωπος}, \gr{ζῷον}}};
+\node[box, fill=green!6] at (6.2, 2.2) {(b) 주어에 대해 말해지지 않고\\주어 안에 있음\\[2pt]{\scriptsize 개별 부수성: 이 \gr{λευκόν}}};
+\node[box, fill=yellow!8] at (0, -0.2) {(c) 주어에 대해 말해지고\\주어 안에 있음\\[2pt]{\scriptsize 보편 부수성: \gr{ἐπιστήμη}, \gr{χρῶμα}}};
+\node[box, fill=red!6] at (6.2, -0.2) {(d) 주어에 대해 말해지지도 않고\\주어 안에 있지도 않음\\[2pt]{\scriptsize 제1실체: 이 소크라테스}};
+\end{tikzpicture}
+\end{center}

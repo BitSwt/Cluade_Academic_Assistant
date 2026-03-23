@@ -1,0 +1,24 @@
+\needspace{8\baselineskip}
+\begin{center}
+{\small\bfseries 다섯 술어가능자의 상호 관계}
+\vspace{6pt}
+\begin{tikzpicture}[font=\small,
+  pred/.style={draw, circle, minimum size=1.5cm, align=center}]
+\node[pred, fill=blue!8] (gen) at (90:2.5) {\textbf{류}};
+\node[pred, fill=green!8] (spe) at (162:2.5) {\textbf{종}};
+\node[pred, fill=orange!8] (dif) at (234:2.5) {\textbf{종차}};
+\node[pred, fill=red!8] (pro) at (306:2.5) {\textbf{고유성}};
+\node[pred, fill=yellow!15] (acc) at (18:2.5) {\textbf{부수성}};
+\draw (gen) -- (spe);
+\draw (gen) -- (dif);
+\draw (spe) -- (dif);
+\draw (spe) -- (pro);
+\draw (pro) -- (acc);
+\draw (gen) -- (acc);
+\draw (dif) -- (pro);
+\draw (dif) -- (acc);
+\draw (spe) -- (acc);
+\draw (gen) -- (pro);
+\node[font=\scriptsize, text=gray] at (0, -3.2) {VII장: 10쌍 모두 비교 (공통점 + 차이점)};
+\end{tikzpicture}
+\end{center}

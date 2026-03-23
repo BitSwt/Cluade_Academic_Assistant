@@ -1,0 +1,15 @@
+\needspace{10\baselineskip}
+\begin{center}
+{\small\bfseries 양상 명제의 귀결 관계 (명제론 12--13장)}
+\vspace{6pt}
+\begin{tikzpicture}[box/.style={draw, rounded corners=3pt, minimum width=3.8cm, minimum height=1.2cm, align=center, font=\small}, >=stealth]
+\node[box, fill=blue!8] (I) at (0, 2.5) {\textbf{I} 가능하다\\(\gr{δυνατόν})};
+\node[box, fill=red!8] (II) at (6, 2.5) {\textbf{II} 가능하지 않다\\(\gr{οὐ δυνατόν})};
+\node[box, fill=green!8] (III) at (0, 0) {\textbf{III} 가능하지 않다\\(\gr{δυνατὸν μὴ εἶναι})};
+\node[box, fill=orange!8] (IV) at (6, 0) {\textbf{IV} 필연적이다\\(\gr{ἀναγκαῖον})};
+\draw[<->, thick, red!60] (I) -- node[above, font=\footnotesize] {모순} (II);
+\draw[<->, thick, red!60] (III) -- node[below, font=\footnotesize] {모순} (IV);
+\draw[->, thick, blue!50] (IV) -- node[right, font=\footnotesize] {함축} (I);
+\draw[->, thick, blue!50] (II) -- node[left, font=\footnotesize] {함축} (III);
+\end{tikzpicture}
+\end{center}

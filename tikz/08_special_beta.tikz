@@ -1,0 +1,17 @@
+\needspace{8\baselineskip}
+\begin{center}
+{\small\bfseries 오르가논의 전승 경로}
+\vspace{6pt}
+\begin{tikzpicture}[>=stealth, font=\small,
+  era/.style={draw, rounded corners=3pt, minimum width=3.5cm, minimum height=0.8cm, align=center}]
+\node[era, fill=blue!8] (gr) at (0, 0) {그리스어\\{\scriptsize 알렉산드리아 학파}};
+\node[era, fill=green!8] (sy) at (4, 0) {시리아어\\{\scriptsize 세르기우스, 6c}};
+\node[era, fill=orange!8] (ar) at (8, 0) {아랍어\\{\scriptsize 후나인, 9c}};
+\node[era, fill=red!8] (la) at (4, -1.8) {라틴어\\{\scriptsize 보에티우스, 6c}};
+\node[era, fill=red!8] (la2) at (8, -1.8) {라틴어\\{\scriptsize 12c 톨레도}};
+\draw[->, thick] (gr) -- (sy);
+\draw[->, thick] (sy) -- (ar);
+\draw[->, thick] (gr) -- (la);
+\draw[->, thick] (ar) -- (la2);
+\end{tikzpicture}
+\end{center}

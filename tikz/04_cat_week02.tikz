@@ -1,0 +1,16 @@
+\needspace{10\baselineskip}
+\begin{center}
+{\small\bfseries 실체의 구조 (범주론 5장)}
+\vspace{6pt}
+\begin{tikzpicture}[>=stealth, font=\small,
+  box/.style={draw, rounded corners=3pt, align=center, minimum height=0.8cm}]
+\node[box, fill=red!8, minimum width=3cm] (p1) at (0, 0) {제1실체\\{\scriptsize 이 소크라테스, 이 말}};
+\node[box, fill=blue!8, minimum width=3cm] (sp) at (-2.5, 2) {종 (\gr{εἶδος})\\{\scriptsize 사람, 말}};
+\node[box, fill=blue!8, minimum width=3cm] (ge) at (2.5, 2) {류 (\gr{γένος})\\{\scriptsize 동물}};
+\node[box, fill=gray!10, minimum width=6cm] (s2) at (0, 2) {};
+\node at (0, 3.2) {\textbf{제2실체}};
+\draw[->, thick] (p1) -- node[left, font=\scriptsize] {said of} (sp);
+\draw[->, thick] (sp) -- node[above, font=\scriptsize] {said of} (ge);
+\node[font=\scriptsize, text=gray] at (0, -0.8) {제1실체가 없으면 다른 어떤 것도 존재할 수 없다 (2b5--6)};
+\end{tikzpicture}
+\end{center}

@@ -1,0 +1,17 @@
+\needspace{10\baselineskip}
+\begin{center}
+{\small\bfseries 오르가논의 논리적 상승 구조}
+\vspace{6pt}
+\begin{tikzpicture}[>=stealth, font=\small, stage/.style={draw, rounded corners=3pt, minimum width=5cm, minimum height=0.9cm, align=center}]
+\node[stage, fill=blue!8] (cat) at (0, 0) {\textbf{범주론}: 단순 항 (\gr{ὀνόματα}, \gr{ῥήματα})};
+\node[stage, fill=green!8] (isag) at (0, 1.5) {\textbf{이사고게}: 술어 관계 (류, 종, 종차, 고유, 부수)};
+\node[stage, fill=orange!8] (deint) at (0, 3) {\textbf{명제론}: 명제 (\gr{ἀπόφανσις}) --- 참/거짓};
+\node[stage, fill=red!8] (anal) at (0, 4.5) {\textbf{분석론}: 추론 (\gr{συλλογισμός})};
+\draw[->, very thick, gray] (cat) -- (isag);
+\draw[->, very thick, gray] (isag) -- (deint);
+\draw[->, very thick, gray] (deint) -- (anal);
+\node[font=\scriptsize, text=gray, right] at (3, 0.75) {항이 결합하여};
+\node[font=\scriptsize, text=gray, right] at (3, 2.25) {술어가 명제를 이루어};
+\node[font=\scriptsize, text=gray, right] at (3, 3.75) {명제가 전제를 이루어};
+\end{tikzpicture}
+\end{center}

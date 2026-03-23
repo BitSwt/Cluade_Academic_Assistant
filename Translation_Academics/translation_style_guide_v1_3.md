@@ -1,14 +1,16 @@
 # 번역본 작성 규칙 및 서식
-버전: v1_2
+버전: v1_3
 
 고전 텍스트 한국어 번역본 제작에 적용하는 모든 규칙.
-강의록 작성 규칙(`document_style_guide`)과 공유하는 기반(master.sty, build.py, KoNLPy 조사 검사)은 동일하며, 이 문서는 번역본에만 고유한 규칙을 다룬다.
+강의록 작성 규칙과 공유하는 기반(master.sty, build.py, KoNLPy 조사 검사)은 동일하며, 이 문서는 번역본에만 고유한 규칙을 다룬다.
 
 ---
 
 ## 버전 이력
 
-**v1_2** (현재): `\bekker` → `\margref` 범용 명칭 변경. Bekker, Stephanus, DK, SVF, 장·절 번호 등 어떤 참조 체계에도 사용 가능. `translation.sty v1_3` 반영.
+**v1_3** (현재): 표제 블록 3요소 배치로 변경 (좌 원어 / 중앙 분량 / 우 라틴어). 페이지 헤더 2줄 형식으로 변경 (저자 / 제목, 분량 없음). 여백 참조 번호 색상 버건디(`h2burgundy`)로 변경. `translation.sty v1_4` 반영.
+
+**v1_2**: `\bekker` → `\margref` 범용 명칭 변경. Bekker, Stephanus, DK, SVF, 장·절 번호 등 어떤 참조 체계에도 사용 가능. `translation.sty v1_3` 반영.
 
 **v1_1**: 이중 각주(manyfoot) 폐지. 단일 `\footnote` 숫자 체계로 통합.
 
@@ -58,7 +60,7 @@
 [I.1] 철학의 연구를 뜻하는 사람은 ...                  ← 장·절 (범용)
 ```
 
-`.tex` 변환 시 `\margref{1a1}`로 바뀌어 좌측 여백에 회색 산세리프로 배치된다.
+`.tex` 변환 시 `\margref{1a1}`로 바뀌어 좌측 여백에 **버건디 산세리프**로 배치된다.
 
 참조 번호는 원전의 의미 단락이 시작되는 지점마다 붙인다. 모든 행에 붙이는 것이 아니라, 번역문의 흐름상 자연스러운 단락 전환 지점에 배치한다.
 
@@ -104,27 +106,118 @@
 
 ## .tex 변환 규칙
 
-### 표제 블록과 헤더 — 원어 전용
+### 표제 블록 — 3요소 배치
 
-표제 블록(`\translationtitle`)과 매 페이지 헤더(`\fancyhead`)에는 한국어를 넣지 않는다. 저자명·저작명·분량 모두 원어로 표기한다.
+표제 블록은 `\translationtitle` 매크로 대신, 좌·중앙·우 3요소 배치를 직접 구성한다. 한국어를 넣지 않는다.
 
-그리스어 저술: 좌측 헤더에 그리스어, 우측 헤더에 라틴어 제목.
-라틴어 저술: 좌우 모두 라틴어.
-아랍어 저술: 좌우 모두 영어 음차.
+**좌측**: 원어 저자명 + 원어 저작명 (그리스어는 비이탤릭)
+**중앙**: 분량 (Bekker 범위, 장·절 범위, 권수 등)
+**우측**: 라틴어(또는 영어 음차) 저자명 + 제목 (이탤릭)
 
-그리스어는 비이탤릭, 그리스어·한국어 제외 제목은 이탤릭(`\gri{}`).
+```latex
+{% — 표제 블록: 좌 원어 / 중앙 분량 / 우 라틴어 —
+\par\medskip
+\begingroup
+\setstretch{1.0}%
+\fontsize{14pt}{16pt}\selectfont\bfseries\color{h1navy}%
+\noindent
+\begin{minipage}[t]{0.45\linewidth}
+\raggedright
+저자 원어\\
+저작 원어
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.1\linewidth}
+\centering
+\vspace{0pt}%
+분량
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.45\linewidth}
+\raggedleft
+\gri{저자 라틴어}\\
+\gri{저작 라틴어}
+\end{minipage}%
+\par
+\endgroup
+\vspace{4pt}%
+{\color{rulecolor}\hrule height 0.4pt}%
+\vspace{8pt}%
+}
+```
 
-### 프리앰블 구조
+그리스어 저술 예:
+
+```latex
+{% — 표제 블록 —
+\par\medskip
+\begingroup
+\setstretch{1.0}%
+\fontsize{14pt}{16pt}\selectfont\bfseries\color{h1navy}%
+\noindent
+\begin{minipage}[t]{0.45\linewidth}
+\raggedright
+Ἀριστοτέλης\\
+Κατηγορίαι
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.1\linewidth}
+\centering
+\vspace{0pt}%
+1a1--4a21
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.45\linewidth}
+\raggedleft
+\gri{Aristotle}\\
+\gri{Categoriae}
+\end{minipage}%
+\par
+\endgroup
+\vspace{4pt}%
+{\color{rulecolor}\hrule height 0.4pt}%
+\vspace{8pt}%
+}
+```
+
+### 페이지 헤더 — 2줄, 분량 없음
+
+매 페이지 상단 헤더는 **2줄**로 구성한다. 저자명을 첫째 줄, 저작명을 둘째 줄에 놓는다. **분량(권수, Bekker 범위 등)은 헤더에 표시하지 않는다.**
+
+좌측 헤더: 원어 (그리스어는 비이탤릭)
+우측 헤더: 라틴어 또는 영어 음차 (이탤릭)
+
+```latex
+\fancyhead[L]{\footnotesize\color{midgray}\shortstack[l]{Ἀριστοτέλης\\Κατηγορίαι}}
+\fancyhead[R]{\footnotesize\color{midgray}\shortstack[r]{\gri{Aristotle}\\\gri{Categoriae}}}
+```
+
+라틴어 저술 예:
+
+```latex
+\fancyhead[L]{\footnotesize\color{midgray}\shortstack[l]{Thomas Aquinas\\\gri{Summa Theologiae}}}
+\fancyhead[R]{\footnotesize\color{midgray}\shortstack[r]{Thomas Aquinas\\\gri{Summa Theologiae}}}
+```
+
+### 여백 참조 번호 — 버건디 색상
+
+`translation.sty`의 기본 `\margref` 색상(midgray)을 **버건디(h2burgundy)**로 재정의한다. `\usepackage{translation}` 직후에 아래 한 줄을 추가한다.
+
+```latex
+\usepackage{translation}
+% 절 번호 색상을 버건디로 변경
+\renewcommand*{\marginfont}{\footnotesize\color{h2burgundy}\sffamily}
+```
+
+### 프리앰블 구조 (전체 예시)
 
 ```latex
 % !TEX program = lualatex
 \documentclass[12pt, a4paper]{article}
 \usepackage{master}
 \usepackage{translation}
-% translation.sty v1_3:
-%   \margref{} — 좌측 여백 참조 번호
-%   \translationtitle{}{}{} — 표제 블록
-%   각주: master.sty의 \footnote 그대로 사용
+% 절 번호 색상을 버건디로 변경
+\renewcommand*{\marginfont}{\footnotesize\color{h2burgundy}\sffamily}
 %
 % master.sty가 이미 로드한 패키지 중복 선언 금지
 % tikz 불필요 — 번역본에는 도식을 넣지 않는다
@@ -132,17 +225,46 @@
 % 이 문서에서 쓰는 저술만 정의
 \DeclareWorkGR{Cat}{범주론}{Κατηγορίαι}{Categoriae}
 
-\fancyhead[L]{\footnotesize\color{midgray}Κατηγορίαι}
-\fancyhead[R]{\footnotesize\color{midgray}\gri{Categoriae}}
+% 헤더: 2줄 (저자 / 제목), 분량 없음
+\fancyhead[L]{\footnotesize\color{midgray}\shortstack[l]{Ἀριστοτέλης\\Κατηγορίαι}}
+\fancyhead[R]{\footnotesize\color{midgray}\shortstack[r]{\gri{Aristotle}\\\gri{Categoriae}}}
 
 \begin{document}
 \thispagestyle{firstpage}
 
-\translationtitle{Ἀριστοτέλης}{Κατηγορίαι, \gri{Categoriae}}{1a1--4a21}
+{% — 표제 블록: 좌 원어 / 중앙 분량 / 우 라틴어 —
+\par\medskip
+\begingroup
+\setstretch{1.0}%
+\fontsize{14pt}{16pt}\selectfont\bfseries\color{h1navy}%
+\noindent
+\begin{minipage}[t]{0.45\linewidth}
+\raggedright
+Ἀριστοτέλης\\
+Κατηγορίαι
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.1\linewidth}
+\centering
+\vspace{0pt}%
+1a1--4a21
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.45\linewidth}
+\raggedleft
+\gri{Aristotle}\\
+\gri{Categoriae}
+\end{minipage}%
+\par
+\endgroup
+\vspace{4pt}%
+{\color{rulecolor}\hrule height 0.4pt}%
+\vspace{8pt}%
+}
 
 \section*{제1장}
 
-\margref{1a1}본문...
+\margref{1a1}본문 시작...\footnote{각주 내용}
 
 \end{document}
 ```
@@ -160,7 +282,7 @@
 
 ### 강의록 전용 환경 — 번역본에서 사용하지 않는 것들
 
-`\bilingualquote`, `\srcquote`, `\weeksection`, `concepttable`, tikz 관련 모든 환경.
+`\translationtitle` (v1_3부터 직접 구성으로 대체), `\bilingualquote`, `\srcquote`, `\weeksection`, `concepttable`, tikz 관련 모든 환경.
 
 ---
 
@@ -178,7 +300,7 @@
 
 ## 인용 원칙
 
-시카고 스타일 (Notes-Bibliography). 2차 문헌 인용은 각주(`\footnote`)에 넣는다.
+시카고 스타일 (Notes-Bibliography). 2차 문헌 인용은 각주(`\footnote`)에 넣는다. 2차 문헌은 영어권 자료 또는 원어 편집본·주석만 참조한다. 본문이나 각주에서 특정 학자의 견해를 언급할 때는 반드시 각주에 정확한 서지 정보를 표기한다. 영어 번역본이 존재하는 원전은 참고문헌 목록에서 편집본과 번역본 정보를 함께 표기한다 (공통 규칙 `style_guide v4_0` 참조).
 
 ---
 

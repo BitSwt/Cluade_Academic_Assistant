@@ -1,0 +1,16 @@
+\needspace{14\baselineskip}
+\begin{center}
+{\small\bfseries 포르피리오스의 나무 (이사고게 4.21--6.5 Busse)}
+\vspace{6pt}
+\begin{tikzpicture}[every node/.style={font=\small}, level 1/.style={sibling distance=7cm, level distance=1.4cm}, level 2/.style={sibling distance=4cm, level distance=1.4cm}, level 3/.style={sibling distance=3cm, level distance=1.4cm}, level 4/.style={sibling distance=2.5cm, level distance=1.4cm}, edge from parent/.style={draw, thick}]
+\node {\textbf{\gr{οὐσία}} (실체)}
+  child {node {\gr{σῶμα} (물체)}
+    child {node {\gr{ἔμψυχον σῶμα}}
+      child {node {\gr{ζῷον} (동물)}
+        child {node {\textbf{\gr{ἄνθρωπος}} (사람)} child {node {\scriptsize 소크라테스}} child {node {\scriptsize 플라톤}} }
+        child {node {\scriptsize 비이성적 동물}} }
+      child {node {\scriptsize 식물}} }
+    child {node {\scriptsize 무생물 물체}} }
+  child {node {\scriptsize 비물체적 실체}} ;
+\end{tikzpicture}
+\end{center}

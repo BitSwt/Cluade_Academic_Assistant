@@ -1,0 +1,17 @@
+\needspace{10\baselineskip}
+\begin{center}
+{\small\bfseries 대당 사각형 (명제론 7장, 17b16--18a12)}
+\vspace{6pt}
+\begin{tikzpicture}[prop/.style={draw, rounded corners=3pt, minimum width=4.2cm, minimum height=1.1cm, align=center, font=\small}, >=stealth]
+\node[prop, fill=blue!8] (A) at (0, 2.8) {\textbf{A} 전칭 긍정\\모든 S는 P이다};
+\node[prop, fill=red!8] (E) at (6.5, 2.8) {\textbf{E} 전칭 부정\\어떤 S도 P가 아니다};
+\node[prop, fill=green!8] (I) at (0, 0) {\textbf{I} 특칭 긍정\\어떤 S는 P이다};
+\node[prop, fill=orange!8] (O) at (6.5, 0) {\textbf{O} 특칭 부정\\어떤 S는 P가 아니다};
+\draw[<->, thick, blue!60] (A) -- node[above, font=\footnotesize] {반대 (\gr{ἐναντίαι})} (E);
+\draw[<->, thick, green!60] (I) -- node[below, font=\footnotesize] {소반대 (\gr{ὑπεναντίαι})} (O);
+\draw[->, thick, gray] (A) -- node[left, font=\footnotesize] {함축} (I);
+\draw[->, thick, gray] (E) -- node[right, font=\footnotesize] {함축} (O);
+\draw[<->, thick, red!60, dashed] (A) -- node[above, sloped, font=\footnotesize] {모순 (\gr{ἀντιφάσεις})} (O);
+\draw[<->, thick, red!60, dashed] (E) -- node[above, sloped, font=\footnotesize] {모순} (I);
+\end{tikzpicture}
+\end{center}

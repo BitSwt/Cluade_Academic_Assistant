@@ -1,0 +1,18 @@
+\needspace{8\baselineskip}
+\begin{center}
+{\small\bfseries 아리스토텔레스의 열 범주 (범주론 4장, 1b25--2a4)}
+\vspace{6pt}
+\begin{tikzpicture}[font=\small,
+  cat/.style={draw, rounded corners=2pt, minimum width=2.2cm, minimum height=0.7cm, align=center}]
+\node[cat, fill=red!8] at (0, 0) {\textbf{실체}\\(\gr{οὐσία})};
+\node[cat, fill=blue!6] at (3, 0) {양\\(\gr{ποσόν})};
+\node[cat, fill=blue!6] at (6, 0) {질\\(\gr{ποιόν})};
+\node[cat, fill=blue!6] at (9, 0) {관계\\(\gr{πρός τι})};
+\node[cat, fill=gray!8] at (0, -1.2) {장소\\(\gr{ποῦ})};
+\node[cat, fill=gray!8] at (3, -1.2) {시간\\(\gr{ποτέ})};
+\node[cat, fill=gray!8] at (6, -1.2) {위치\\(\gr{κεῖσθαι})};
+\node[cat, fill=gray!8] at (9, -1.2) {소유\\(\gr{ἔχειν})};
+\node[cat, fill=gray!8] at (3, -2.4) {행위\\(\gr{ποιεῖν})};
+\node[cat, fill=gray!8] at (6, -2.4) {수동\\(\gr{πάσχειν})};
+\end{tikzpicture}
+\end{center}

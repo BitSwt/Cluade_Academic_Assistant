@@ -1,0 +1,17 @@
+\needspace{8\baselineskip}
+\begin{center}
+{\small\bfseries 종차의 분할적·구성적 이중 역할}
+\vspace{6pt}
+\begin{tikzpicture}[>=stealth, font=\small]
+\node (animal) at (0, 2) {\textbf{\gr{ζῷον}} (동물)};
+\node (rational) at (-2.5, 0.5) {\gr{λογικόν} (이성적)};
+\node (irrational) at (2.5, 0.5) {\gr{ἄλογον} (비이성적)};
+\node (human) at (-2.5, -1) {\textbf{\gr{ἄνθρωπος}} (사람)};
+\node (beast) at (2.5, -1) {비이성적 동물};
+\draw[->, thick, blue!60] (animal) -- (rational) node[midway, left, font=\scriptsize] {분할};
+\draw[->, thick, blue!60] (animal) -- (irrational);
+\draw[->, thick] (rational) -- (human);
+\draw[->, thick] (irrational) -- (beast);
+\draw[->, thick, red!60, dashed] (human.east) to[bend left=40] node[right, font=\scriptsize] {구성: 류+종차=종} (animal.south east);
+\end{tikzpicture}
+\end{center}

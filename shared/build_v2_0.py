@@ -2,14 +2,19 @@
 # -*- coding: utf-8 -*-
 """
 build.py — LuaLaTeX 문서 빌드 및 버전 관리 스크립트
-버전: v1_9
+버전: v2_0
 
 사용법:
-    python3 build.py <tex파일명>           # minor 버전업 후 컴파일
-    python3 build.py <tex파일명> --major   # major 버전업 후 컴파일
-    python3 build.py <tex파일명> --patch   # 버전 유지, 재컴파일만
-    python3 build.py --list                # 모든 파일의 현재 버전 출력
-    python3 build.py --bump-sty            # master.sty 버전업
+    python3 build.py <tex파일명>                # minor 버전업 후 컴파일
+    python3 build.py <tex파일명> --major        # major 버전업 후 컴파일
+    python3 build.py <tex파일명> --patch        # 버전 유지, 재컴파일만
+    python3 build.py <tex파일명> --qa           # 빌드 후 QA+지침준수 검수
+    python3 build.py --all                      # 전체 빌드 (batch)
+    python3 build.py --all --qa                 # 전체 빌드 + 검수
+    python3 build.py --qa-only                  # PDF 품질 검수만
+    python3 build.py --compliance               # 집필 지침 검수만
+    python3 build.py --list                     # 모든 파일의 현재 버전 출력
+    python3 build.py --bump-sty                 # master.sty 버전업
 
 버전 번호 규칙:
     major.minor 형식 (예: v1_2)
@@ -25,11 +30,14 @@ build.py — LuaLaTeX 문서 빌드 및 버전 관리 스크립트
       - 한국어 조사 문법 검사 (대응 .md 파일이 있을 때 자동 실행)
 
 스타일 참조:
-    master.sty v1_26  — 폰트·색상·표 서식 전역 설정
+    master.sty v1_27  — 폰트·색상·표 서식 전역 설정
     document_style_guide  — 표기 원칙 및 서식 규칙 전체
     ONBOARDING            — 프레임워크 사용법 및 명령어 목록
 
 변경 이력:
+    v2_0: qa_check + compliance_check 통합 (--qa, --qa-only, --compliance)
+          --all: 전체 배치 빌드. --batch: 대화형 프롬프트 생략.
+          master.sty 참조 v1_26 → v1_27
     v1_9: check_particles_for_md() 추가
           조사 검사(KoNLPy) 를 필수 빌드 단계로 통합
           KoNLPy 미설치 시 컴파일 중단 (폰트 미설치와 동일 처리)
@@ -38,6 +46,7 @@ build.py — LuaLaTeX 문서 빌드 및 버전 관리 스크립트
 import os
 import sys
 import json
+import glob
 import shutil
 import subprocess
 from datetime import datetime
@@ -45,6 +54,9 @@ from pathlib import Path
 
 
 # ── 설정 ──────────────────────────────────────────────────────────────────────
+
+# 전역 모드
+BATCH_MODE = False  # --batch/--all 시 True → 대화형 프롬프트 생략
 
 # 프로젝트 루트 디렉터리 (이 스크립트가 있는 곳)
 PROJECT_DIR = Path(__file__).parent
@@ -292,8 +304,12 @@ def compile_document(tex_path: Path, version_str: str) -> bool:
             )
             if output_exists:
                 print("\n  오류가 있지만 PDF는 생성되었습니다.")
-                print("  계속 진행하시겠습니까? (y: 진행 / n: 중단)")
-                answer = input("  → ").strip().lower()
+                if BATCH_MODE:
+                    print("  [batch] 경고 무시, 계속")
+                    answer = "y"
+                else:
+                    print("  계속 진행하시겠습니까? (y: 진행 / n: 중단)")
+                    answer = input("  → ").strip().lower()
                 if answer != "y":
                     print("\n  빌드를 중단했습니다.")
                     print("  .tex 파일을 수정한 뒤 다시 빌드하세요.\n")
@@ -316,9 +332,13 @@ def compile_document(tex_path: Path, version_str: str) -> bool:
         if i == COMPILE_PASSES:
             has_issues = check_render(result.stdout)
             if has_issues:
-                print("  위 경고/오류를 확인했습니다. 그래도 계속 진행하시겠습니까?")
-                print("  계속 진행하려면 y, 중단하려면 n을 입력하세요.")
-                answer = input("  → ").strip().lower()
+                if BATCH_MODE:
+                    print("  [batch] 렌더 경고 무시, 계속")
+                    answer = "y"
+                else:
+                    print("  위 경고/오류를 확인했습니다. 그래도 계속 진행하시겠습니까?")
+                    print("  계속 진행하려면 y, 중단하려면 n을 입력하세요.")
+                    answer = input("  → ").strip().lower()
                 if answer != "y":
                     print("\n  빌드를 중단했습니다.")
                     print("  .tex 파일을 수정한 뒤 다시 빌드하세요.\n")
@@ -450,12 +470,15 @@ def check_particles_for_md(tex_path: Path) -> bool:
             print(f"    (상세 목록은 check_particles.py를 직접 실행하여 확인)")
 
     if errors:
-        print("\n  조사 오류가 있습니다. 그래도 계속 빌드하시겠습니까?")
-        print("  계속하려면 y, 중단하려면 n을 입력하세요.")
-        answer = input("  → ").strip().lower()
-        if answer != "y":
-            print("\n  빌드를 중단했습니다. 조사 오류를 수정한 뒤 다시 빌드하세요.\n")
-            return True  # 사용자가 중단 선택
+        if BATCH_MODE:
+            print("\n  [batch] 조사 오류 경고, 계속")
+        else:
+            print("\n  조사 오류가 있습니다. 그래도 계속 빌드하시겠습니까?")
+            print("  계속하려면 y, 중단하려면 n을 입력하세요.")
+            answer = input("  → ").strip().lower()
+            if answer != "y":
+                print("\n  빌드를 중단했습니다. 조사 오류를 수정한 뒤 다시 빌드하세요.\n")
+                return True  # 사용자가 중단 선택
 
     return False  # 계속 진행
 
@@ -524,30 +547,92 @@ def cmd_bump_support(filename: str):
 
 # ── 진입점 ─────────────────────────────────────────────────────────────────────
 
+def cmd_build_all(mode, run_qa):
+    """전체 [0-1]*.tex 배치 빌드."""
+    global BATCH_MODE
+    BATCH_MODE = True
+
+    tex_files = sorted(glob.glob(str(PROJECT_DIR / "[0-1]*.tex")))
+    if not tex_files:
+        print("  ✗ [0-1]*.tex 없음"); sys.exit(1)
+
+    if not check_fonts():
+        sys.exit(1)
+
+    print(f"\n{'='*60}")
+    print(f"  전체 빌드 — {len(tex_files)}개 (batch)")
+    print(f"{'='*60}")
+
+    versions = load_versions()
+    ok_n = fail_n = 0
+
+    for tf in tex_files:
+        tp = Path(tf)
+        key = tp.name
+        maj, mi = bump_version(versions, key, mode)
+        vs = format_version(maj, mi)
+        if compile_document(tp, vs):
+            ok_n += 1
+        else:
+            fail_n += 1
+            print(f"  ✗ 실패: {key}")
+
+    save_versions(versions)
+    copy_support_files(versions)
+    print(f"\n  빌드: ✅ {ok_n}  ❌ {fail_n}")
+
+    if fail_n:
+        sys.exit(1)
+    if run_qa:
+        _run_script("qa_check.py")
+        _run_script("compliance_check.py")
+
+
+def _run_script(name):
+    """보조 스크립트 실행."""
+    p = PROJECT_DIR / name
+    if not p.exists():
+        print(f"  ⚠ {name} 없음, 건너뜀"); return
+    r = subprocess.run([sys.executable, str(p)], cwd=PROJECT_DIR)
+    if r.returncode != 0:
+        sys.exit(1)
+
+
 def main():
+    global BATCH_MODE
     args = sys.argv[1:]
 
     if not args or args[0] in ("-h", "--help"):
-        print(__doc__)
-        sys.exit(0)
+        print(__doc__); sys.exit(0)
 
+    run_qa = "--qa" in args
+    if "--batch" in args or "--all" in args:
+        BATCH_MODE = True
+
+    if "--qa-only" in args:
+        _run_script("qa_check.py"); return
+    if "--compliance" in args and len([a for a in args if not a.startswith("-")]) == 0:
+        _run_script("compliance_check.py"); return
     if args[0] == "--list":
-        cmd_list()
+        cmd_list(); return
+    if args[0] == "--bump-sty":
+        cmd_bump_support("master.sty"); return
 
-    elif args[0] == "--bump-sty":
-        cmd_bump_support("master.sty")
+    if "--all" in args:
+        mode = "patch"
+        if "--major" in args: mode = "major"
+        elif "--minor" in args: mode = "minor"
+        cmd_build_all(mode, run_qa); return
 
-    else:
-        # tex 파일 빌드
-        tex_filename = args[0]
-        mode = "minor"  # 기본값
-
-        if "--major" in args:
-            mode = "major"
-        elif "--patch" in args:
-            mode = "patch"
-
-        cmd_build(tex_filename, mode)
+    # 단일 파일
+    tex_filename = args[0]
+    mode = "minor"
+    if "--major" in args: mode = "major"
+    elif "--patch" in args: mode = "patch"
+    cmd_build(tex_filename, mode)
+    if run_qa:
+        _run_script("qa_check.py")
+        _run_script("compliance_check.py")
 
 
 if __name__ == "__main__":

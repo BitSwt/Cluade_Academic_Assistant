@@ -1,0 +1,14 @@
+\needspace{8\baselineskip}
+\begin{center}
+{\small\bfseries 이 강독의 세 저작과 그 관계}
+\vspace{6pt}
+\begin{tikzpicture}[>=stealth, font=\small,
+  box/.style={draw, rounded corners=3pt, minimum width=3.8cm, minimum height=1.2cm, align=center}]
+\node[box, fill=blue!8] (cat) at (0, 0) {\textbf{범주론}\\비결합 표현의 분류};
+\node[box, fill=green!8] (isag) at (5.5, 0) {\textbf{이사고게}\\술어 관계의 유형};
+\node[box, fill=orange!8] (deint) at (2.75, 2.5) {\textbf{명제론}\\결합 표현과 진리};
+\draw[->, thick] (cat) -- node[below, font=\scriptsize] {전제} (isag);
+\draw[->, thick] (cat) -- node[left, font=\scriptsize] {항} (deint);
+\draw[->, thick] (isag) -- node[right, font=\scriptsize] {술어} (deint);
+\end{tikzpicture}
+\end{center}

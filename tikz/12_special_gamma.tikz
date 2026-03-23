@@ -1,0 +1,22 @@
+\needspace{8\baselineskip}
+\begin{center}
+{\small\bfseries 다섯 술어가능자와 사중 분류의 교차}
+\vspace{6pt}
+\begin{tikzpicture}[font=\small]
+\draw[thick] (0,0) -- (8,0) -- (8,-3) -- (0,-3) -- cycle;
+\draw[thick] (0,-1) -- (8,-1);
+\draw[thick] (2.5,0) -- (2.5,-3);
+\draw[thick] (5.25,0) -- (5.25,-3);
+\node[font=\scriptsize\bfseries] at (1.25, -0.5) {said of};
+\node[font=\scriptsize\bfseries] at (3.87, -0.5) {not said of};
+\node[font=\scriptsize\bfseries] at (6.62, -0.5) {술어가능자};
+\node[font=\scriptsize] at (1.25, -1.5) {류, 종};
+\node[font=\scriptsize] at (3.87, -1.5) {---};
+\node[font=\scriptsize] at (6.62, -1.5) {류, 종, 종차};
+\node[font=\scriptsize] at (1.25, -2.5) {보편 부수성};
+\node[font=\scriptsize] at (3.87, -2.5) {개별 부수성};
+\node[font=\scriptsize] at (6.62, -2.5) {고유, 부수};
+\node[font=\scriptsize, rotate=90] at (-0.5, -1.5) {not in};
+\node[font=\scriptsize, rotate=90] at (-0.5, -2.5) {in};
+\end{tikzpicture}
+\end{center}

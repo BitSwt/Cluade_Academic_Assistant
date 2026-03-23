@@ -1,0 +1,19 @@
+\needspace{10\baselineskip}
+\begin{center}
+{\small\bfseries 오르가논의 여섯 저작과 논리적 상승}
+\vspace{6pt}
+\begin{tikzpicture}[>=stealth, font=\small,
+  box/.style={draw, rounded corners=3pt, minimum width=4.5cm, minimum height=0.8cm, align=center}]
+\node[box, fill=blue!8] (cat) at (0, 0) {\textbf{범주론}: 항 (terms)};
+\node[box, fill=blue!8] (deint) at (0, 1.3) {\textbf{명제론}: 명제 (propositions)};
+\node[box, fill=green!8] (apr) at (0, 2.6) {\textbf{분석론 전서}: 삼단논법};
+\node[box, fill=green!8] (apo) at (0, 3.9) {\textbf{분석론 후서}: 논증};
+\node[box, fill=orange!8] (top) at (0, 5.2) {\textbf{토피카}: 변증술};
+\node[box, fill=orange!8] (se) at (0, 6.5) {\textbf{소피스트적 논박}: 궤변};
+\draw[->, very thick, gray] (cat) -- (deint);
+\draw[->, very thick, gray] (deint) -- (apr);
+\draw[->, very thick, gray] (apr) -- (apo);
+\draw[->, very thick, gray] (apo) -- (top);
+\draw[->, very thick, gray] (top) -- (se);
+\end{tikzpicture}
+\end{center}
